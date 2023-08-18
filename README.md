@@ -1,1 +1,1 @@
-# smart-robot-chess-companion
+# Smart Robot Chess Companion
