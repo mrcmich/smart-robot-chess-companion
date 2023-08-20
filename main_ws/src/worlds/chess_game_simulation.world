@@ -195,8 +195,8 @@
           <material>
             <script>
               <name>ChessBoardMaterial</name>
-              <uri>/home/marco/.gazebo/models/chess_board/./materials/scripts</uri>
-              <uri>/home/marco/.gazebo/models/chess_board/./materials/textures</uri>
+              <uri>model://chess_board/materials/scripts</uri>
+              <uri>model://chess_board/materials/textures</uri>
             </script>
           </material>
           <transparency>0</transparency>
@@ -364,7 +364,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -391,7 +391,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -469,7 +469,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -496,7 +496,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -574,7 +574,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -601,7 +601,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -679,7 +679,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -706,7 +706,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -784,7 +784,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -811,7 +811,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -889,7 +889,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -916,7 +916,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -994,7 +994,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -1021,7 +1021,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -1099,7 +1099,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -1126,7 +1126,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_white/./pawn.stl</uri>
+              <uri>model://pawn_white/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -1580,7 +1580,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/rook_white/./rook.stl</uri>
+              <uri>model://rook_white/rook.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -1607,7 +1607,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/rook_white/./rook.stl</uri>
+              <uri>model://rook_white/rook.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -1685,7 +1685,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/rook_white/./rook.stl</uri>
+              <uri>model://rook_white/rook.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -1712,7 +1712,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/rook_white/./rook.stl</uri>
+              <uri>model://rook_white/rook.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -1790,7 +1790,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/knight_white/./knight.stl</uri>
+              <uri>model://knight_white/knight.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -1817,7 +1817,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/knight_white/./knight.stl</uri>
+              <uri>model://knight_white/knight.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -1895,7 +1895,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/knight_white/./knight.stl</uri>
+              <uri>model://knight_white/knight.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -1922,7 +1922,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/knight_white/./knight.stl</uri>
+              <uri>model://knight_white/knight.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2000,7 +2000,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/bishop_white/./bishop.stl</uri>
+              <uri>model://bishop_white/bishop.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2027,7 +2027,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/bishop_white/./bishop.stl</uri>
+              <uri>model://bishop_white/bishop.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2105,7 +2105,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/bishop_white/./bishop.stl</uri>
+              <uri>model://bishop_white/bishop.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2132,7 +2132,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/bishop_white/./bishop.stl</uri>
+              <uri>model://bishop_white/bishop.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2210,7 +2210,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/queen_white/./queen.stl</uri>
+              <uri>model://queen_white/queen.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2237,7 +2237,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/queen_white/./queen.stl</uri>
+              <uri>model://queen_white/queen.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2315,7 +2315,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/king_white/./king.stl</uri>
+              <uri>model://king_white/king.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2342,7 +2342,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/king_white/./king.stl</uri>
+              <uri>model://king_white/king.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2420,7 +2420,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2447,7 +2447,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2525,7 +2525,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2552,7 +2552,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2630,7 +2630,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2657,7 +2657,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2735,7 +2735,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2762,7 +2762,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2840,7 +2840,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2867,7 +2867,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2945,7 +2945,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -2972,7 +2972,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3050,7 +3050,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3077,7 +3077,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3155,7 +3155,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3182,7 +3182,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/pawn_black/./pawn.stl</uri>
+              <uri>model://pawn_black/pawn.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3260,7 +3260,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/rook_black/./rook.stl</uri>
+              <uri>model://rook_black/rook.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3287,7 +3287,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/rook_black/./rook.stl</uri>
+              <uri>model://rook_black/rook.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3365,7 +3365,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/rook_black/./rook.stl</uri>
+              <uri>model://rook_black/rook.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3392,7 +3392,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/rook_black/./rook.stl</uri>
+              <uri>model://rook_black/rook.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3470,7 +3470,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/knight_black/./knight.stl</uri>
+              <uri>model://knight_black/knight.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3497,7 +3497,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/knight_black/./knight.stl</uri>
+              <uri>model://knight_black/knight.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3575,7 +3575,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/knight_black/./knight.stl</uri>
+              <uri>model://knight_black/knight.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3602,7 +3602,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/knight_black/./knight.stl</uri>
+              <uri>model://knight_black/knight.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3680,7 +3680,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/bishop_black/./bishop.stl</uri>
+              <uri>model://bishop_black/bishop.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3707,7 +3707,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/bishop_black/./bishop.stl</uri>
+              <uri>model://bishop_black/bishop.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3785,7 +3785,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/bishop_black/./bishop.stl</uri>
+              <uri>model://bishop_black/bishop.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3812,7 +3812,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/bishop_black/./bishop.stl</uri>
+              <uri>model://bishop_black/bishop.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3890,7 +3890,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/queen_black/./queen.stl</uri>
+              <uri>model://queen_black/queen.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3917,7 +3917,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/queen_black/./queen.stl</uri>
+              <uri>model://queen_black/queen.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -3995,7 +3995,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/king_black/./king.stl</uri>
+              <uri>model://king_black/king.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -4022,7 +4022,7 @@
           <pose>0 0 0 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>/home/marco/.gazebo/models/king_black/./king.stl</uri>
+              <uri>model://king_black/king.stl</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
