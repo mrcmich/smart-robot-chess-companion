@@ -1,2 +1,2 @@
-
+smart-robot-chess-companion
 -DCATKIN_DEVEL_PREFIX=/home/marco/ROS/smart-robot-chess-companion/main_ws/devel -DCMAKE_INSTALL_PREFIX=/home/marco/ROS/smart-robot-chess-companion/main_ws/install -G Unix Makefiles

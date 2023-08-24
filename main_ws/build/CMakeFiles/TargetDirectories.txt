@@ -35,3 +35,11 @@
 /home/marco/ROS/smart-robot-chess-companion/main_ws/build/gtest/googletest/CMakeFiles/test.dir
 /home/marco/ROS/smart-robot-chess-companion/main_ws/build/gtest/googletest/CMakeFiles/gtest_main.dir
 /home/marco/ROS/smart-robot-chess-companion/main_ws/build/gtest/googletest/CMakeFiles/gtest.dir
+/home/marco/ROS/smart-robot-chess-companion/main_ws/build/smart-robot-chess-companion/CMakeFiles/install/strip.dir
+/home/marco/ROS/smart-robot-chess-companion/main_ws/build/smart-robot-chess-companion/CMakeFiles/install/local.dir
+/home/marco/ROS/smart-robot-chess-companion/main_ws/build/smart-robot-chess-companion/CMakeFiles/install.dir
+/home/marco/ROS/smart-robot-chess-companion/main_ws/build/smart-robot-chess-companion/CMakeFiles/list_install_components.dir
+/home/marco/ROS/smart-robot-chess-companion/main_ws/build/smart-robot-chess-companion/CMakeFiles/rebuild_cache.dir
+/home/marco/ROS/smart-robot-chess-companion/main_ws/build/smart-robot-chess-companion/CMakeFiles/edit_cache.dir
+/home/marco/ROS/smart-robot-chess-companion/main_ws/build/smart-robot-chess-companion/CMakeFiles/test.dir
+/home/marco/ROS/smart-robot-chess-companion/main_ws/build/smart-robot-chess-companion/CMakeFiles/_catkin_empty_exported_target.dir

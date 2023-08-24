@@ -131,6 +131,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/marco/ROS/smart-robot-chess-companion/main_ws/build/gtest/cmake_install.cmake")
+  include("/home/marco/ROS/smart-robot-chess-companion/main_ws/build/smart-robot-chess-companion/cmake_install.cmake")
 
 endif()
 
