@@ -4,7 +4,7 @@
 SRCC is a ROS package integrating Computer Vision algorithms for the simulation of a UR3e collaborative robot, programmed to act as a chess player against the user. A Robotiq Hand-E gripper is attached to the robot for all necessary pick-and-place operations. The simulation is run in Gazebo, whereas MoveIt is used for path planning.
 
 ## Installation
-Execute our Python setup script to load our custom gazebo models in Gazebo's models library, run command *catkin_make* and append line source <srcc-path>/main_ws/devel/setup.bash to file <home>/.bashrc. You can now use smart-robot-chess-companion as any other ROS package. Note that you're not required to run *source devel/setup.bash* when opening a new terminal when using our ROS package.
+Install [ROS packages](https://github.com/mrcmich/ur3/tree/noetic-devel) for the simulation of robot and gripper in Gazebo inside your catkin workspace, then clone this repository inside the workspace's src folder, build packages using catkin and run setup.py.
 
 ## Simulation
 In order to bring up the simulation, run the following command:
