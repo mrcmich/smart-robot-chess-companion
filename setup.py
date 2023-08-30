@@ -30,5 +30,5 @@ def add_source_line_to_bashrc():
 if __name__ == '__main__':
     set_rwx_file_permissions()
     catkin_make()
-    add_models_to_gazebo_library()
+    #add_models_to_gazebo_library()
     add_source_line_to_bashrc()
