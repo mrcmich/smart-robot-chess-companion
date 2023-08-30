@@ -1,3 +1,16 @@
 main_ws/build
 main_ws/devel
+main_ws/gazebo_ros_link_attacher
+main_ws/robotiq
+main_ws/robotiq_urcap_control
+main_ws/.rosinstall
+main_ws/ros_ur3
+main_ws/setup.bash
+main_ws/setup.sh
+main_ws/setup.zsh
+main_ws/trac_ik
+main_ws/universal_robot
+main_ws/Universal_Robots_ROS_Driver
+main_ws/ur_ikfast
+main_ws/ur_msgs
 *.pyc
