@@ -14,3 +14,4 @@ main_ws/src/Universal_Robots_ROS_Driver
 main_ws/src/ur_ikfast
 main_ws/src/ur_msgs
 *.pyc
+.vscode/
