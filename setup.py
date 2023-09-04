@@ -18,8 +18,15 @@ def add_source_line_to_bashrc():
     cmd = f'echo "{bashrc_line}" >> {bashrc_path}'
     subprocess.run(cmd, shell=True)
     print('Added source line to .bashrc file.')
+    
+def srcc_setup():
+    cwd = os.getcwd()
+    cmd = f'cd main_ws/src/smart_robot_chess_companion; python setup.py build; sudo python setup.py install; cd {cwd}'
+    subprocess.run(cmd, shell=True)
+    print('Executed smart_robot_chess_companion ros package setup script.')
 
 if __name__ == '__main__':
     set_rwx_file_permissions()
+    srcc_setup()
     catkin_make()
     add_source_line_to_bashrc()

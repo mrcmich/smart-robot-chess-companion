@@ -13,4 +13,5 @@ main_ws/src/universal_robot
 main_ws/src/Universal_Robots_ROS_Driver
 main_ws/src/ur_ikfast
 main_ws/src/ur_msgs
+main_ws/src/smart_robot_chess_companion/build
 *.pyc
