@@ -9,7 +9,7 @@ Clone this repository, install [ROS packages for the simulation of robot and gri
 ## Simulation
 In order to bring up the simulation, run the following command:
   ```
-   roslaunch smart-robot-chess-companion chess_game_simulation.launch
+   roslaunch smart_robot_chess_companion chess_game_simulation.launch
   ```
 While the simulation is running, it's possible to send commands to joints and gripper of the robot.
 
