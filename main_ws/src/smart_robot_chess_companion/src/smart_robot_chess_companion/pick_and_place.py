@@ -1,122 +1,205 @@
 import numpy as np
-from gazebo_msgs.srv import GetModelState
 from ur_control import transformations
-import rospy
-from smart_robot_chess_companion.constants import STARTING_ROBOT_ARM_CONFIGURATION, GRIPPER_OPEN_POSITION
+import math
+from smart_robot_chess_companion import pick_and_place_config, pick_and_place_utils
 
-TABLE_HEIGHT = 0.775
-CHESS_BOARD_SIZE = (0.440, 0.440, 0.03)
-GRIPPER_POSITION_Z_MARGIN = 0.05
-Z_DISTANCE_ROBOT_WRIST3_GRIPPER_FINGER_FRAMES = 0.107
-GRIPPER_POSITION_Z_MARGIN = 0.05
-MIN_GRIPPER_POSITION_Z = TABLE_HEIGHT + CHESS_BOARD_SIZE[-1] + Z_DISTANCE_ROBOT_WRIST3_GRIPPER_FINGER_FRAMES + GRIPPER_POSITION_Z_MARGIN
-CHESS_BOARD_LINE_POSITIONS = np.array([-3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5]) * CHESS_BOARD_SIZE[0] / 10
-CAPTURED_PIECE_POSITION = np.array([0., -0.337, MIN_GRIPPER_POSITION_Z + 0.1])
+#TODO da testare
+def compute_captured_chess_piece_position(n_chess_pieces_captured):
+    cell_size = pick_and_place_config.CHESS_BOARD_SIZE[0] / 10
+    first_captured_chess_piece_position_x, first_captured_chess_piece_position_y = pick_and_place_config.CAPTURED_PIECES_FIRST_POSITION
 
-TRANSFORMATION_ROBOT_BASE_FRAME_WORLD_FRAME = np.array([
-    [0., -1., 0.,  0.],
-    [1.,  0., 0.,  0.335],
-    [0.,  0., 1., -TABLE_HEIGHT],
-    [0.,  0., 0.,  1.]
-])
-
-MODEL_NAMES_DICT = {
-    'king': [
-        'king_white', 
-        'king_black'
-    ],
-    'pawn': [
-        'pawn_white_1', 'pawn_white_2', 'pawn_white_3', 'pawn_white_4', 'pawn_white_5', 'pawn_white_6', 'pawn_white_7', 'pawn_white_8', 
-        'pawn_black_1', 'pawn_black_2', 'pawn_black_3', 'pawn_black_4', 'pawn_black_5', 'pawn_black_6', 'pawn_black_7', 'pawn_black_8'
-    ],
-    'queen': [
-        'queen_white', 
-        'queen_black'
-    ],
-    'rook': [
-        'rook_white', 
-        'rook_black'
-    ],
-    'bishop': [
-        'bishop_white', 
-        'bishop_black'
-    ],
-    'knight': [
-        'knight_white', 
-        'knight_black'
-    ],
-}
-
-def get_chess_piece_grasp_configuration(chess_piece_type):
-    if chess_piece_type == 'king':
-        return (0.02, 0.021)
+    if n_chess_pieces_captured == 0:
+        (i, j) = (0, 0)
+    elif n_chess_pieces_captured == 11:
+        (i, j) = (0, n_chess_pieces_captured)
     else:
-        None
-
-def get_chess_piece_model_name(chess_piece_type, chess_piece_position=[0., 0.]):
-    model_state_service_proxy = rospy.ServiceProxy( '/gazebo/get_model_state', GetModelState)
-    model_name = None
-    min_squared_distance = -1
+        i = n_chess_pieces_captured // 11
+        j = n_chess_pieces_captured * (0 <= n_chess_pieces_captured <= 11) + \
+            (n_chess_pieces_captured - 11) * (12 <= n_chess_pieces_captured <= 21) + \
+            (n_chess_pieces_captured - 21) * (22 <= n_chess_pieces_captured < 32)
     
-    for candidate_model_name in MODEL_NAMES_DICT[chess_piece_type]:
-        candidate_model_state = model_state_service_proxy(candidate_model_name, 'link')
-        candidate_model_position = candidate_model_state.pose.position.x, candidate_model_state.pose.position.y
-        squared_distance = (chess_piece_position[0] - candidate_model_position[0]) ** 2 + (chess_piece_position[1] - candidate_model_position[1]) ** 2
+    captured_chess_piece_position_x = first_captured_chess_piece_position_x + cell_size * i
+    captured_chess_piece_position_y = first_captured_chess_piece_position_y + cell_size * j if j <= 5 else \
+                                      -(first_captured_chess_piece_position_y + cell_size * j)
+    
+    return (captured_chess_piece_position_x, captured_chess_piece_position_y)
+
+# ee_position_world:   position of end effector w.r.t  world frame.
+# ee_orientation_base: orientation of end effector w.r.t (robot) base frame, 
+#                      in the form of three angles phi, theta, psi; when axes assumes the default value these are
+#                      the ZYZ euler angles.
+def move_end_effector(robot_arm, ee_position_world, ee_orientation_base, axes='rzyz', wait=True, duration=1.0):
+    ee_position_base = np.dot(pick_and_place_config.TRANSFORMATION_ROBOT_BASE_FRAME_WORLD_FRAME, np.append(ee_position_world, [1.]))[:-1]
+    ee_orientation_base_phi, ee_orientation_base_theta, ee_orientation_base_psi = ee_orientation_base
+    pose_position = np.append(ee_position_base, [0., 0., 0., 0.])
+    pose_orientation = transformations.euler_matrix(
+        ee_orientation_base_phi, ee_orientation_base_theta, ee_orientation_base_psi, axes=axes)
+    pose = transformations.pose_quaternion_from_matrix(pose_orientation) + pose_position
+    robot_arm.set_target_pose(pose=pose, wait=wait, t=duration)
+
+def _pick_chess_piece(
+        robot_arm, 
+        chess_piece_type, 
+        starting_cell, 
+        grasp_ee_position_world_z, 
+        grasp_gripper_position, 
+        grasping=True, 
+        wait=True, 
+        duration=1.0
+    ):
+    
+    starting_cell_position_world_x, starting_cell_position_world_y = pick_and_place_utils.get_position_world_xy(starting_cell)
+    grasp_setup_ee_position_world = np.array([
+        starting_cell_position_world_x, 
+        starting_cell_position_world_y, 
+        pick_and_place_config.GRASP_SETUP_GRIPPER_POSITION_Z
+    ])
+    grasp_setup_ee_position_aux = np.dot(
+        pick_and_place_config.TRANSFORMATION_ROBOT_BASE_AUXILIARY_FRAME_WORLD_FRAME, 
+        np.append(grasp_setup_ee_position_world, [1.])
+    )
+    grasp_ee_position_world = np.array([
+        starting_cell_position_world_x, 
+        starting_cell_position_world_y, 
+        grasp_ee_position_world_z
+    ])
+    grasp_setup_ee_orientation_base_psi = -math.atan2(grasp_setup_ee_position_aux[1], grasp_setup_ee_position_aux[0])
+    grasp_setup_ee_orientation_base = [0., math.pi, grasp_setup_ee_orientation_base_psi]
+    grasp_ee_orientation_base = pick_and_place_config.DEFAULT_ORIENTATION_EULER_ZYZ
+
+    #TODO verificare cosa cambia se l'end-effector si sposta dietro al robot
+    if grasp_setup_ee_position_aux[0] * grasp_setup_ee_position_aux[1] > 0:
+        grasp_setup_robot_arm_configuration = pick_and_place_config.FRONT_PICK_AND_PLACE_SETUP_ROBOT_ARM_CONFIGURATION_RIGHT_ARM
+    else: 
+        grasp_setup_robot_arm_configuration = pick_and_place_config.FRONT_PICK_AND_PLACE_SETUP_ROBOT_ARM_CONFIGURATION_LEFT_ARM
+
+    robot_arm.set_joint_positions(position=grasp_setup_robot_arm_configuration, wait=wait, t=duration)
+    move_end_effector(robot_arm, grasp_setup_ee_position_world, grasp_setup_ee_orientation_base, wait=wait, duration=duration)
+    move_end_effector(robot_arm, grasp_ee_position_world, grasp_ee_orientation_base, wait=wait, duration=0.4)
+    
+    if grasping:
+        chess_piece_model_name = pick_and_place_utils.get_chess_piece_model_name(
+            chess_piece_type, 
+            starting_cell_position_world_x, 
+            starting_cell_position_world_y
+        )
+        chess_piece_link_name = chess_piece_model_name + '::link'
+        robot_arm.gripper.command(grasp_gripper_position)
+        robot_arm.gripper.grab(link_name=chess_piece_link_name)
         
-        if squared_distance == 0:
-            return candidate_model_name
-        
-        if min_squared_distance == -1 or squared_distance < min_squared_distance:
-            model_name = candidate_model_name
-            min_squared_distance = squared_distance
+    move_end_effector(robot_arm, grasp_setup_ee_position_world, grasp_ee_orientation_base, wait=wait, duration=0.4)
+
+def _place_chess_piece(
+        robot_arm, 
+        chess_piece_type, 
+        final_cell, 
+        release_ee_position_world_z, 
+        grasping=True, 
+        wait=True, 
+        duration=1.0
+    ):
+
+    final_cell_position_world_x, final_cell_position_world_y = pick_and_place_utils.get_position_world_xy(final_cell)
+    release_setup_ee_position_world = np.array([
+        final_cell_position_world_x, 
+        final_cell_position_world_y, 
+        pick_and_place_config.GRASP_SETUP_GRIPPER_POSITION_Z
+    ])
+    release_setup_ee_position_aux = np.dot(
+        pick_and_place_config.TRANSFORMATION_ROBOT_BASE_AUXILIARY_FRAME_WORLD_FRAME, 
+        np.append(release_setup_ee_position_world, [1.])
+    )
+    release_ee_position_world = np.array([
+        final_cell_position_world_x, 
+        final_cell_position_world_y, 
+        release_ee_position_world_z
+    ])
+    release_setup_ee_orientation_base_psi = -math.atan2(release_setup_ee_position_aux[1], release_setup_ee_position_aux[0])
+    release_setup_ee_orientation_base = [0., math.pi, release_setup_ee_orientation_base_psi]
+    release_ee_orientation_base = pick_and_place_config.DEFAULT_ORIENTATION_EULER_ZYZ
+
+    #TODO verificare cosa cambia se l'end-effector si sposta dietro al robot
+    if release_setup_ee_position_aux[0] * release_setup_ee_position_aux[1] > 0:
+        release_setup_robot_arm_configuration = pick_and_place_config.FRONT_PICK_AND_PLACE_SETUP_ROBOT_ARM_CONFIGURATION_RIGHT_ARM
+    else: 
+        release_setup_robot_arm_configuration = pick_and_place_config.FRONT_PICK_AND_PLACE_SETUP_ROBOT_ARM_CONFIGURATION_LEFT_ARM
+
+    robot_arm.set_joint_positions(position=release_setup_robot_arm_configuration, wait=wait, t=duration)
+    move_end_effector(robot_arm, release_setup_ee_position_world, release_setup_ee_orientation_base, wait=wait, duration=duration)
+    move_end_effector(robot_arm, release_ee_position_world, release_ee_orientation_base, wait=wait, duration=0.4)
     
-    return model_name
-
-def get_chess_piece_position(chess_piece_cell):
-    chess_piece_row = int(chess_piece_cell[1])
-    chess_piece_column = chess_piece_cell[0].lower()
-
-    if chess_piece_column not in list('abcdefgh'):
-        return None
-    
-    chess_piece_position_x = CHESS_BOARD_LINE_POSITIONS[8 - chess_piece_row]
-    chess_piece_position_y = CHESS_BOARD_LINE_POSITIONS[ord(chess_piece_column) - 97]
-
-    return np.array([chess_piece_position_x, chess_piece_position_y])
-
-def move_end_effector(robot_arm, target_position_world, target_orientation_eulerzyz=[0., 3.14, -3.14], wait=True, duration=1.0):
-    target_position_base = np.dot(TRANSFORMATION_ROBOT_BASE_FRAME_WORLD_FRAME, np.append(target_position_world, [1.]))[:-1]
-    
-    target_pose_position = np.append(target_position_base, [0., 0., 0., 0.])
-    target_pose_orientation = transformations.euler_matrix(
-        target_orientation_eulerzyz[0], target_orientation_eulerzyz[1], target_orientation_eulerzyz[2], axes='rzyz')
-    target_pose = transformations.pose_quaternion_from_matrix(target_pose_orientation) + target_pose_position
-    robot_arm.set_target_pose(pose=target_pose, wait=wait, t=duration)
-
-def pick_and_place_chess_piece(robot_arm, chess_piece_type, starting_cell, final_cell=None, 
-                               target_orientation_eulerzyz=[0., 3.14, -3.14], wait=True, duration=1.0):
-    
-    grasp_position_z, gripper_grasp_position = get_chess_piece_grasp_configuration(chess_piece_type)
-    starting_piece_position_x, starting_piece_position_y = get_chess_piece_position(starting_cell)
-    piece_model_name = get_chess_piece_model_name(chess_piece_type, [starting_piece_position_x, starting_piece_position_y])
-    grasp_setup_position = np.array([starting_piece_position_x, starting_piece_position_y, MIN_GRIPPER_POSITION_Z + 0.1])
-    grasp_position = np.array([starting_piece_position_x, starting_piece_position_y, MIN_GRIPPER_POSITION_Z + grasp_position_z])
-    chess_piece_link_name = f'{piece_model_name}::link'
-
-    # pick chess piece
-    move_end_effector(robot_arm, grasp_setup_position, target_orientation_eulerzyz, wait, duration)
-    move_end_effector(robot_arm, grasp_position, target_orientation_eulerzyz, wait, duration)
-    robot_arm.gripper.command(gripper_grasp_position)
-    robot_arm.gripper.grab(link_name=chess_piece_link_name)
-   
-    # place chess piece
-    move_end_effector(robot_arm, grasp_setup_position, target_orientation_eulerzyz, wait, duration)
-    if final_cell is None:
-        move_end_effector(robot_arm, CAPTURED_PIECE_POSITION, target_orientation_eulerzyz, wait)
-        robot_arm.gripper.command(GRIPPER_OPEN_POSITION) 
+    if grasping:
+        chess_piece_model_name = pick_and_place_utils.get_chess_piece_model_name(
+            chess_piece_type, 
+            final_cell_position_world_x, 
+            final_cell_position_world_y
+        )
+        chess_piece_link_name = chess_piece_model_name + '::link'
+        robot_arm.gripper.command(pick_and_place_config.OPEN_GRIPPER_POSITION) 
         robot_arm.gripper.release(link_name=chess_piece_link_name)
-    else:
-        # TODO: caso in cui final_cell è una cella valida
-        print('Caso non implementato: final_cell not None')
+        
+    move_end_effector(robot_arm, release_setup_ee_position_world, release_ee_orientation_base, wait=wait, duration=0.4)
+ 
+@pick_and_place_utils.timeout(seconds=15, default=False)
+def _move_chess_piece(
+        robot_arm, 
+        chess_piece_type, 
+        starting_cell, 
+        final_cell, 
+        grasp_positions_z_dict=pick_and_place_config.DEFAULT_GRASP_POSITIONS_Z_DICT,
+        grasp_gripper_positions_dict=pick_and_place_config.DEFAULT_GRASP_GRIPPER_POSITIONS_DICT, 
+        grasping=True, 
+        wait=True, 
+        duration=1.0
+    ):
+
+    grasp_gripper_position = grasp_gripper_positions_dict[chess_piece_type]
+    grasp_release_ee_position_world_z = grasp_positions_z_dict[chess_piece_type]
+    _pick_chess_piece(
+        robot_arm, 
+        chess_piece_type, 
+        starting_cell, 
+        grasp_release_ee_position_world_z, 
+        grasp_gripper_position, 
+        grasping=grasping, 
+        wait=wait, 
+        duration=duration
+    )
+    _place_chess_piece(
+        robot_arm, 
+        chess_piece_type, 
+        final_cell, 
+        grasp_release_ee_position_world_z, 
+        grasping=grasping, 
+        wait=wait, 
+        duration=duration
+    )
+    robot_arm.set_joint_positions(position=pick_and_place_config.REST_ROBOT_ARM_CONFIGURATION, wait=wait, t=duration)
+    return True
+
+def move_chess_piece(
+        robot_arm, 
+        chess_piece_type, 
+        starting_cell, 
+        final_cell, 
+        grasp_positions_z_dict=pick_and_place_config.DEFAULT_GRASP_POSITIONS_Z_DICT,
+        grasp_gripper_positions_dict=pick_and_place_config.DEFAULT_GRASP_GRIPPER_POSITIONS_DICT, 
+        grasping=True, 
+        wait=True, 
+        duration=1.0
+    ):
+
+    chess_piece_moved = False
     
-    robot_arm.set_joint_positions(position=STARTING_ROBOT_ARM_CONFIGURATION, wait=wait, t=duration)
+    while not chess_piece_moved:
+        chess_piece_moved = _move_chess_piece(
+            robot_arm, 
+            chess_piece_type, 
+            starting_cell, 
+            final_cell, 
+            grasp_positions_z_dict,
+            grasp_gripper_positions_dict, 
+            grasping, 
+            wait, 
+            duration
+        )
