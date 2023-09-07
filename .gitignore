@@ -9,8 +9,10 @@ main_ws/src/setup.bash
 main_ws/src/setup.sh
 main_ws/src/setup.zsh
 main_ws/src/trac_ik
+main_ws/src/rospy_message_converter
 main_ws/src/universal_robot
 main_ws/src/Universal_Robots_ROS_Driver
 main_ws/src/ur_ikfast
 main_ws/src/ur_msgs
+main_ws/src/smart_robot_chess_companion/build
 *.pyc
