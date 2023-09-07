@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from smart_robot_chess_companion import pick_and_place, pick_and_place_config
+from smart_robot_chess_companion import pick_and_place, pick_and_place_config, pick_and_place_utils
 from ur_control import arm, constants
 import rospy
 
@@ -17,10 +17,14 @@ def test_for_ik_solutions_single_cell(robot_arm, chess_piece_type, cell):
     )
 
 def test_for_ik_solutions(robot_arm):
-    for row in range(1, 9):
-        for column in list('abcdefgh'):
+    for column in list('wyxabcdefghjkl'):
+        for row in range(1, 10):
+            cell = column + str(row)
+
+            if not pick_and_place_utils.is_valid_cell(cell):
+                continue
+
             for chess_piece_type in ['king', 'pawn', 'knight', 'bishop', 'queen', 'rook']:
-                cell = column + str(row)
                 test_for_ik_solutions_single_cell(robot_arm, chess_piece_type, cell)
                 rospy.sleep(0.5)
 

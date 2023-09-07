@@ -5,7 +5,7 @@ import numpy as np
 ROBOT_BASE_POSITION_WORLD_X = -0.315
 TABLE_HEIGHT = 0.775
 CHESS_BOARD_SIZE = (0.440, 0.440, 0.03)
-CHESS_BOARD_LINE_POSITIONS = np.array([-3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5]) * CHESS_BOARD_SIZE[0] / 10
+EXTENDED_CHESS_BOARD_CELL_WA_POSITION_WORLD_XY = np.array([-4.5, -7.5]) * CHESS_BOARD_SIZE[0] / 10
 
 # robot arm joint configurations and gripper positions
 REST_ROBOT_ARM_CONFIGURATION = [-(math.pi / 2), -3.3, 2., -1.1, -(math.pi / 2), 0.]
@@ -67,3 +67,13 @@ TRANSFORMATION_ROBOT_BASE_AUXILIARY_FRAME_WORLD_FRAME = np.array([
     [0.,  0., 1., -TABLE_HEIGHT],
     [0.,  0., 0.,  1.]
 ])
+
+# mappings
+MAPPING_N_CAPTURED_CHESS_PIECES_CELL = { n_captured_chess_pieces: cell for n_captured_chess_pieces, cell in enumerate([
+    'x9', 'x8', 'x7', 'x6', 'x5', 'x4',
+    'y9', 'y8', 'y7', 'y6', 'y5',
+    'w9', 'w8', 'w7', 'w6', 'w5',
+    'j9', 'j8', 'j7', 'j6', 'j5', 'j4',
+    'k9', 'k8', 'k7', 'k6', 'k5',
+    'l9', 'l8', 'l7', 'l6', 'l5'
+]) }

@@ -36,17 +36,17 @@ CHESS_PIECES_MODEL_NAMES_DICT = {
 }
 
 def get_position_world_xy(cell):
+    if not is_valid_cell(cell):
+        return (None, None)
+    
+    cell_size = pick_and_place_config.CHESS_BOARD_SIZE[0] / 10
     cell_row = int(cell[1])
     cell_column = cell[0].lower()
-
-    if cell_column not in list('abcdefgh'):
-        return (None, None)
-    
-    if not 1 <= cell_row <= 8:
-        return (None, None)
-    
-    cell_position_x = pick_and_place_config.CHESS_BOARD_LINE_POSITIONS[8 - cell_row]
-    cell_position_y = pick_and_place_config.CHESS_BOARD_LINE_POSITIONS[ord(cell_column) - 97]
+    cell_row_index = 9 - cell_row
+    cell_column_mapping = { column: index for index, column in enumerate(list('wyxzabcdefghijkl')) if column not in list('zi') }
+    cell_column_index = cell_column_mapping[cell_column]
+    cell_position_x = pick_and_place_config.EXTENDED_CHESS_BOARD_CELL_WA_POSITION_WORLD_XY[0] + cell_size * cell_row_index
+    cell_position_y = pick_and_place_config.EXTENDED_CHESS_BOARD_CELL_WA_POSITION_WORLD_XY[1] + cell_size * cell_column_index
 
     return (cell_position_x, cell_position_y)
 
@@ -74,10 +74,22 @@ def is_valid_cell(cell):
     cell_row = int(cell[1])
     cell_column = cell[0].lower()
 
-    if 1 <= cell_row <= 8 and 'a' <= cell_column <= 'h':
-        return True
+    if cell_column not in list('wyxabcdefghjkl'):
+        return False
     
-    return False
+    if not 1 <= cell_row <= 9:
+        return False
+    
+    if cell_column in list('wykl') and cell_row < 5:
+        return False
+    
+    if cell_column in list('xj') and cell_row < 4:
+        return False
+    
+    if cell_column in list('abcdefgh') and cell_row > 8:
+        return False
+    
+    return True
 
 # use by adding line:
 # @timeout(seconds=timer_duration_seconds, default=False)

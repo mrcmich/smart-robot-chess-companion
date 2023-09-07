@@ -3,27 +3,6 @@ from ur_control import transformations
 import math
 from smart_robot_chess_companion import pick_and_place_config, pick_and_place_utils
 
-#TODO da testare
-def compute_captured_chess_piece_position(n_chess_pieces_captured):
-    cell_size = pick_and_place_config.CHESS_BOARD_SIZE[0] / 10
-    first_captured_chess_piece_position_x, first_captured_chess_piece_position_y = pick_and_place_config.CAPTURED_PIECES_FIRST_POSITION
-
-    if n_chess_pieces_captured == 0:
-        (i, j) = (0, 0)
-    elif n_chess_pieces_captured == 11:
-        (i, j) = (0, n_chess_pieces_captured)
-    else:
-        i = n_chess_pieces_captured // 11
-        j = n_chess_pieces_captured * (0 <= n_chess_pieces_captured <= 11) + \
-            (n_chess_pieces_captured - 11) * (12 <= n_chess_pieces_captured <= 21) + \
-            (n_chess_pieces_captured - 21) * (22 <= n_chess_pieces_captured < 32)
-    
-    captured_chess_piece_position_x = first_captured_chess_piece_position_x + cell_size * i
-    captured_chess_piece_position_y = first_captured_chess_piece_position_y + cell_size * j if j <= 5 else \
-                                      -(first_captured_chess_piece_position_y + cell_size * j)
-    
-    return (captured_chess_piece_position_x, captured_chess_piece_position_y)
-
 # ee_position_world:   position of end effector w.r.t  world frame.
 # ee_orientation_base: orientation of end effector w.r.t (robot) base frame, 
 #                      in the form of three angles phi, theta, psi; when axes assumes the default value these are
@@ -49,11 +28,17 @@ def _pick_chess_piece(
     ):
     
     starting_cell_position_world_x, starting_cell_position_world_y = pick_and_place_utils.get_position_world_xy(starting_cell)
+
+    if starting_cell_position_world_x is None or starting_cell_position_world_y is None:
+        print('Invalid starting cell: aborting pick operation.')
+        return
+
     grasp_setup_ee_position_world = np.array([
         starting_cell_position_world_x, 
         starting_cell_position_world_y, 
         pick_and_place_config.GRASP_SETUP_GRIPPER_POSITION_Z
     ])
+
     grasp_setup_ee_position_aux = np.dot(
         pick_and_place_config.TRANSFORMATION_ROBOT_BASE_AUXILIARY_FRAME_WORLD_FRAME, 
         np.append(grasp_setup_ee_position_world, [1.])
@@ -67,7 +52,6 @@ def _pick_chess_piece(
     grasp_setup_ee_orientation_base = [0., math.pi, grasp_setup_ee_orientation_base_psi]
     grasp_ee_orientation_base = pick_and_place_config.DEFAULT_ORIENTATION_EULER_ZYZ
 
-    #TODO verificare cosa cambia se l'end-effector si sposta dietro al robot
     if grasp_setup_ee_position_aux[0] * grasp_setup_ee_position_aux[1] > 0:
         grasp_setup_robot_arm_configuration = pick_and_place_config.FRONT_PICK_AND_PLACE_SETUP_ROBOT_ARM_CONFIGURATION_RIGHT_ARM
     else: 
@@ -100,6 +84,11 @@ def _place_chess_piece(
     ):
 
     final_cell_position_world_x, final_cell_position_world_y = pick_and_place_utils.get_position_world_xy(final_cell)
+
+    if final_cell_position_world_x is None or final_cell_position_world_x is None:
+        print('Invalid final cell: aborting place operation.')
+        return
+    
     release_setup_ee_position_world = np.array([
         final_cell_position_world_x, 
         final_cell_position_world_y, 
@@ -118,7 +107,6 @@ def _place_chess_piece(
     release_setup_ee_orientation_base = [0., math.pi, release_setup_ee_orientation_base_psi]
     release_ee_orientation_base = pick_and_place_config.DEFAULT_ORIENTATION_EULER_ZYZ
 
-    #TODO verificare cosa cambia se l'end-effector si sposta dietro al robot
     if release_setup_ee_position_aux[0] * release_setup_ee_position_aux[1] > 0:
         release_setup_robot_arm_configuration = pick_and_place_config.FRONT_PICK_AND_PLACE_SETUP_ROBOT_ARM_CONFIGURATION_RIGHT_ARM
     else: 
