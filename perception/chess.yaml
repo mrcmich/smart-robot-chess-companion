@@ -1,0 +1,17 @@
+path: /content/chess_dataset
+train: train/images
+val: valid/images
+
+names:
+  0: pawn_white
+  1: rook_white
+  2: knight_white
+  3: bishop_white
+  4: queen_white
+  5: king_white
+  6: pawn_black
+  7: rook_black
+  8: knight_black
+  9: bishop_black
+  10: queen_black
+  11: king_black
