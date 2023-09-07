@@ -15,3 +15,6 @@ main_ws/src/ur_ikfast
 main_ws/src/ur_msgs
 *.pyc
 .vscode/
+__pycache__/
+*.pt
+.DS_Store
