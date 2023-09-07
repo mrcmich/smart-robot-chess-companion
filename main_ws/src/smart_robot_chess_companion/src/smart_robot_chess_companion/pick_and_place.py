@@ -1,6 +1,7 @@
 import numpy as np
 from ur_control import transformations
 import math
+import rospy
 from smart_robot_chess_companion import pick_and_place_config, pick_and_place_utils
 
 # ee_position_world:   position of end effector w.r.t  world frame.
@@ -59,7 +60,7 @@ def _pick_chess_piece(
 
     robot_arm.set_joint_positions(position=grasp_setup_robot_arm_configuration, wait=wait, t=duration)
     move_end_effector(robot_arm, grasp_setup_ee_position_world, grasp_setup_ee_orientation_base, wait=wait, duration=duration)
-    move_end_effector(robot_arm, grasp_ee_position_world, grasp_ee_orientation_base, wait=wait, duration=0.4)
+    move_end_effector(robot_arm, grasp_ee_position_world, grasp_ee_orientation_base, wait=wait, duration=duration)
     
     if grasping:
         chess_piece_model_name = pick_and_place_utils.get_chess_piece_model_name(
@@ -71,7 +72,7 @@ def _pick_chess_piece(
         robot_arm.gripper.command(grasp_gripper_position)
         robot_arm.gripper.grab(link_name=chess_piece_link_name)
         
-    move_end_effector(robot_arm, grasp_setup_ee_position_world, grasp_ee_orientation_base, wait=wait, duration=0.4)
+    move_end_effector(robot_arm, grasp_setup_ee_position_world, grasp_ee_orientation_base, wait=wait, duration=duration)
 
 def _place_chess_piece(
         robot_arm, 
@@ -114,7 +115,7 @@ def _place_chess_piece(
 
     robot_arm.set_joint_positions(position=release_setup_robot_arm_configuration, wait=wait, t=duration)
     move_end_effector(robot_arm, release_setup_ee_position_world, release_setup_ee_orientation_base, wait=wait, duration=duration)
-    move_end_effector(robot_arm, release_ee_position_world, release_ee_orientation_base, wait=wait, duration=0.4)
+    move_end_effector(robot_arm, release_ee_position_world, release_ee_orientation_base, wait=wait, duration=duration)
     
     if grasping:
         chess_piece_model_name = pick_and_place_utils.get_chess_piece_model_name(
@@ -126,7 +127,7 @@ def _place_chess_piece(
         robot_arm.gripper.command(pick_and_place_config.OPEN_GRIPPER_POSITION) 
         robot_arm.gripper.release(link_name=chess_piece_link_name)
         
-    move_end_effector(robot_arm, release_setup_ee_position_world, release_ee_orientation_base, wait=wait, duration=0.4)
+    move_end_effector(robot_arm, release_setup_ee_position_world, release_ee_orientation_base, wait=wait, duration=duration)
  
 @pick_and_place_utils.timeout(seconds=15, default=False)
 def _move_chess_piece(
@@ -177,6 +178,7 @@ def move_chess_piece(
         duration=1.0
     ):
 
+    is_first_attempt = True
     chess_piece_moved = False
     
     while not chess_piece_moved:
@@ -191,3 +193,6 @@ def move_chess_piece(
             wait, 
             duration
         )
+
+        if not chess_piece_moved and not is_first_attempt:
+            print('Unable to follow trajectory: trying again...')
