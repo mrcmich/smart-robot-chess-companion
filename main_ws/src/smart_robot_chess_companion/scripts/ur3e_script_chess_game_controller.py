@@ -35,7 +35,6 @@ def ur3e_script_chess_game_controller():
     last_timestamp = None
     input = { 'n_captured_chess_pieces': 0 }
     output = {'timestamp': None, 'chess_piece_type': None, 'starting_cell': None, 'final_cell': None}
-    camera_view_state_publisher.publish(True)
     move_command_subscriber = rospy.Subscriber(
         'move_chess_piece_cmd', 
         String, 
@@ -54,6 +53,8 @@ def ur3e_script_chess_game_controller():
             )
             input['n_captured_chess_pieces'] += 1
             last_timestamp = output['timestamp']
+            camera_view_state_publisher.publish(True)
+        else:
             camera_view_state_publisher.publish(True)
         
         rate.sleep()
