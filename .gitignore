@@ -18,3 +18,4 @@ main_ws/src/ur_msgs
 __pycache__/
 *.pt
 .DS_Store
+.idea/
