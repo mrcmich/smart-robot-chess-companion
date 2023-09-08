@@ -2,10 +2,11 @@
 
 from typing import Any
 import rospy
-from std_msgs.msg import Bool, String, Image
+from std_msgs.msg import Bool, String
+from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 
-from smart_robot_chess_companion import utils
+import smart_robot_chess_companion.utils as utils
 import smart_robot_chess_companion.perception.config as config
 
 
@@ -49,7 +50,9 @@ def perception_node() -> None:
     
     while not rospy.is_shutdown():
         if input['is_camera_view_free'] and input['image'] is not None:
+            print(input['is_camera_view_free'])
             img = bridge.imgmsg_to_cv2(input['image'], desired_encoding='passthrough')
+            print(type(img))
             # TODO: read the image, crop and resize it, and make detection
             # TODO: create board state and check if it has changed
             # TODO: send the board state to paglia if it has changed
