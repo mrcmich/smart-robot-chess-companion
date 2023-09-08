@@ -1,9 +1,10 @@
 #! /usr/bin/env python
 
-from smart_robot_chess_companion import pick_and_place, pick_and_place_config, utils
+import smart_robot_chess_companion.pick_and_place.config as config
+from smart_robot_chess_companion.pick_and_place.pick_and_place import move_chess_piece
+from smart_robot_chess_companion import utils
 from ur_control import arm, constants
 import rospy
-import numpy as np
 from std_msgs.msg import Bool, String
 
 def execute_move_chess_piece_command(command, *args):
@@ -15,7 +16,7 @@ def execute_move_chess_piece_command(command, *args):
     starting_cell = command_data_dict['starting_cell']
 
     if command_data_dict['final_cell'] is None:
-        final_cell = pick_and_place_config.MAPPING_N_CAPTURED_CHESS_PIECES_CELL[n_captured_chess_pieces]
+        final_cell = config.MAPPING_N_CAPTURED_CHESS_PIECES_CELL[n_captured_chess_pieces]
     else:
         final_cell = command_data_dict['final_cell']
 
@@ -28,8 +29,8 @@ def ur3e_script_chess_game_controller():
     rospy.init_node('ur3e_script_control')
     rate = rospy.Rate(10)
     robot_arm = arm.Arm(ft_sensor=True, gripper=constants.GENERIC_GRIPPER) 
-    robot_arm.set_joint_positions(position=pick_and_place_config.REST_ROBOT_ARM_CONFIGURATION, wait=True, t=0.5)
-    robot_arm.gripper.command(pick_and_place_config.OPEN_GRIPPER_POSITION)
+    robot_arm.set_joint_positions(position=config.REST_ROBOT_ARM_CONFIGURATION, wait=True, t=0.5)
+    robot_arm.gripper.command(config.OPEN_GRIPPER_POSITION)
     camera_view_state_publisher = rospy.Publisher('is_camera_view_free', Bool, queue_size=10)
     last_timestamp = None
     input = { 'n_captured_chess_pieces': 0 }
@@ -45,7 +46,7 @@ def ur3e_script_chess_game_controller():
     while not rospy.is_shutdown():
         if output['timestamp'] is not None and output['timestamp'] != last_timestamp:
             camera_view_state_publisher.publish(False)
-            pick_and_place.move_chess_piece(
+            move_chess_piece(
                 robot_arm, 
                 chess_piece_type=output['chess_piece_type'], 
                 starting_cell=output['starting_cell'], 
