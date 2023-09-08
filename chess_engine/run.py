@@ -19,7 +19,7 @@ def is_valid_input(input_string):
     return bool(match)
 
 
-def make_user_move(game_state):
+def plan_user_move(game_state):
     starting_square = None
     ending_square = None
 
@@ -83,17 +83,27 @@ def run():
     while running:
         if not game_over:
             print("User's turn.")
-            user_move = make_user_move(game_state)
-            game_state.move_piece(user_move[0], user_move[1], False)
-            game_state.print_board()
+            user_move = plan_user_move(game_state)
+            # TODO: remove the following lines
+            # game_state.move_piece(user_move[0], user_move[1], False)
+            # game_state.print_board()
+
+            # TODO: need to pass user_move to the robot system using ROS topics.
+            #  The robot moves the piece for the user.
+            #  Then there's the detection phase.
+            #  Then, I should take the JSON file coming from the detection and update the board state.
 
             print("AI's turn.")
             # Due to computing and algorithmic limitations, we limit the AI to reading only three moves ahead (depth=3)
             ai_move = ai.minimax(game_state, 3, -100000, 100000, True, Player.PLAYER_2)
-            game_state.move_piece(ai_move[0], ai_move[1], True)
-            print(
-                f"AI moves from {chr(ord('a') + ai_move[0][1])}{ai_move[0][0] + 1} to {chr(ord('a') + ai_move[1][1])}{ai_move[1][0] + 1}.")
-            game_state.print_board()
+            # TODO: remove the following lines
+            # game_state.move_piece(ai_move[0], ai_move[1], True)
+            # print(
+            #     f"AI moves from {chr(ord('a') + ai_move[0][1])}{ai_move[0][0] + 1} to {chr(ord('a') + ai_move[1][1])}{ai_move[1][0] + 1}")
+            # game_state.print_board()
+            # TODO: need to pass ai_move to the robot system using ROS topics.
+            #  The robot moves the piece for the AI.
+            #  Then there's NO detection.
 
         endgame = game_state.checkmate_stalemate_checker()
         if endgame == 0:
