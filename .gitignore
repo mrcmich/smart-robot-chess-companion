@@ -20,3 +20,4 @@ main_ws/src/smart_robot_chess_companion/build
 __pycache__/
 *.pt
 .DS_Store
+.idea/
