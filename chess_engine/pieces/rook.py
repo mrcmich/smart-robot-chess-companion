@@ -1,5 +1,5 @@
 from player import Player
-from pieces.piece import Piece
+from piece import Piece
 
 
 class Rook(Piece):
