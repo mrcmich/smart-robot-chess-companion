@@ -7,7 +7,8 @@ d = generate_distutils_setup(
     packages=[
     	'smart_robot_chess_companion', 
     	'smart_robot_chess_companion.chess_engine',
-    	'smart_robot_chess_companion.pick_and_place'
+    	'smart_robot_chess_companion.pick_and_place',
+    	'smart_robot_chess_companion.perception'
     ],
     package_dir={'': 'src'}
 )
