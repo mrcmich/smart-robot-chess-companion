@@ -4,10 +4,9 @@ import json
 from collections import defaultdict
 import cv2
 import numpy as np
-import torch
 from ultralytics import YOLO
 
-from .utils import parse_arguments
+from utils import parse_arguments
 
 
 def predict(args: Namespace) -> None:
