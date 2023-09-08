@@ -17,8 +17,10 @@ def execute_move_chess_piece_command(command, *args):
 
     if command_data_dict['final_cell'] is None:
         final_cell = config.MAPPING_N_CAPTURED_CHESS_PIECES_CELL[n_captured_chess_pieces]
+        output['capture_cmd'] = True
     else:
         final_cell = command_data_dict['final_cell']
+        output['capture_cmd'] = False
 
     output['timestamp'] = command_data_dict['timestamp']
     output['chess_piece_type'] = chess_piece_type
@@ -34,7 +36,7 @@ def ur3e_script_chess_game_controller():
     camera_view_state_publisher = rospy.Publisher('is_camera_view_free', Bool, queue_size=10)
     last_timestamp = None
     input = { 'n_captured_chess_pieces': 0 }
-    output = {'timestamp': None, 'chess_piece_type': None, 'starting_cell': None, 'final_cell': None}
+    output = { 'timestamp': None, 'capture_cmd': False, 'chess_piece_type': None, 'starting_cell': None, 'final_cell': None }
     move_command_subscriber = rospy.Subscriber(
         'move_chess_piece_cmd', 
         String, 
@@ -51,7 +53,10 @@ def ur3e_script_chess_game_controller():
                 starting_cell=output['starting_cell'], 
                 final_cell=output['final_cell'], 
             )
-            input['n_captured_chess_pieces'] += 1
+            
+            if output['capture_cmd'] is True:
+                input['n_captured_chess_pieces'] += 1
+
             last_timestamp = output['timestamp']
             camera_view_state_publisher.publish(True)
         else:
