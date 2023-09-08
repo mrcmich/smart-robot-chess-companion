@@ -41,7 +41,8 @@ def ur3e_script_chess_game_controller():
         'move_chess_piece_cmd', 
         String, 
         execute_move_chess_piece_command, 
-        callback_args=[input, output]
+        callback_args=[input, output],
+        queue_size=10
     )
     
     while not rospy.is_shutdown():
