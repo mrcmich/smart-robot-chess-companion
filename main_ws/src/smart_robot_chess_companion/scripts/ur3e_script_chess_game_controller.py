@@ -27,7 +27,7 @@ def execute_move_chess_piece_command(command, *args):
     
 def ur3e_script_chess_game_controller():
     rospy.init_node('ur3e_script_control')
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(2)
     robot_arm = arm.Arm(ft_sensor=True, gripper=constants.GENERIC_GRIPPER) 
     robot_arm.set_joint_positions(position=config.REST_ROBOT_ARM_CONFIGURATION, wait=True, t=0.5)
     robot_arm.gripper.command(config.OPEN_GRIPPER_POSITION)
