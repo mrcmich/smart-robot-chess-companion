@@ -2,6 +2,7 @@
 
 from typing import Any
 import cv2
+import numpy as np
 import rospy
 from std_msgs.msg import Bool, String
 from sensor_msgs.msg import Image
@@ -48,18 +49,17 @@ def perception_node() -> None:
     )
     
     board_state_publisher = rospy.Publisher('board_state', String, queue_size=10)
-    board_state_publisher.publish(True)
+
+    last_board_state_matrix = None
     ratio = 640 / 720
     while not rospy.is_shutdown():
-        #if input['is_camera_view_free'] and input['image'] is not None:
-        if input['image'] is not None:
-            print(input['is_camera_view_free'])
+        if input['is_camera_view_free'] and input['image'] is not None:
             img = bridge.imgmsg_to_cv2(input['image'], 'bgr8')
             resized_img = cv2.resize(img[:, 280:-280, :], (0, 0), fx=ratio, fy=ratio, interpolation=cv2.INTER_AREA)
-            board_state_dict, board_state_matrix = predict.predict(model_checkpoint_path=config.MODEL_CHECKPOINT_PATH, img=resized_img, device='cpu')
-            # TODO: create board state and check if it has changed
-            # TODO: send the board state to paglia if it has changed
-            pass
+            board_state_dict, board_state_matrix = predict.predict(model_checkpoint_path=config.MODEL_CHECKPOINT_PATH, img=resized_img, device=config.DEVICE)
+            if last_board_state_matrix is None or not np.all(board_state_matrix == last_board_state_matrix):
+                message = utils.dict_to_string_ros_message(board_state_dict)
+                board_state_publisher.publish(message)
         
         rate.sleep()
 
