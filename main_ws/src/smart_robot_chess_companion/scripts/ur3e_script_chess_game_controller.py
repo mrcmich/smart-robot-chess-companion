@@ -22,10 +22,10 @@ def execute_move_chess_piece_command(command, *args):
         final_cell = command_data_dict['final_cell']
         output['capture_cmd'] = False
 
-    output['timestamp'] = command_data_dict['timestamp']
     output['chess_piece_type'] = chess_piece_type
     output['starting_cell'] = starting_cell
     output['final_cell'] = final_cell
+    output['timestamp'] = command_data_dict['timestamp']
     
 def ur3e_script_chess_game_controller():
     rospy.init_node('ur3e_script_control')
