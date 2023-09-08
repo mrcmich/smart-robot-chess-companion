@@ -22,7 +22,7 @@ def predict(model_checkpoint_path: str, img: np.ndarray, device: str) -> Tuple[D
     piece_counter = defaultdict(int)
     chess_state_matrix = np.full((8, 8), fill_value=-1, dtype=np.int8)
     
-    image_h, image_w = img.shape
+    image_h, image_w, _ = img.shape
     
     model = YOLO(model_checkpoint_path)
     detections = model.predict(img, imgsz=image_h, conf=0.5, device=device, save_txt=False, save=False)
@@ -37,8 +37,13 @@ def predict(model_checkpoint_path: str, img: np.ndarray, device: str) -> Tuple[D
             piece_counter[class_names[cls_idx]] += 1
             x, w = int(x * image_w), int(w * image_w)
             y, h = int(y * image_h), int(h * image_w)
-            cell_col = np.where((x >= ranges[:, 0]) & (x < ranges[:, 1]))[0].item(0)
-            cell_row = 7 - np.where((y >= ranges[:, 0]) & (y < ranges[:, 1]))[0].item(0)
+            cell_col = np.where((x >= ranges[:, 0]) & (x < ranges[:, 1]))[0]
+            cell_row = np.where((y >= ranges[:, 0]) & (y < ranges[:, 1]))[0]
+            if len(cell_col) != 1 or len(cell_row) != 1:
+                print("WARNING: piece detected out of board, skipping it...")
+                continue
+            cell_col = cell_col[0].item(0)
+            cell_row = 7 - cell_row[0].item(0)
             chess_state_matrix[cell_row, cell_col] = cls_idx
             key = f'{player}_{piece}'
             if not piece in ['queen', 'king']:
