@@ -3,6 +3,13 @@ from .piece import Piece
 
 
 class Bishop(Piece):
+    def __init__(self, name, row_number, col_number, player):
+        super().__init__(name, row_number, col_number, player)
+        self._type = 'bishop'
+    
+    def get_type(self):
+        return self._type
+    
     def get_valid_piece_moves(self, game_state):
         _peaceful_moves = []
         _piece_takes = []

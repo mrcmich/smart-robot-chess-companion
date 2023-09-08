@@ -7,6 +7,10 @@ class Rook(Piece):
         super().__init__(name, row_number, col_number, player)
         self.has_moved = False
         self._breaking_point = None
+        self._type = 'rook'
+
+    def get_type(self):
+        return self._type
 
     def get_valid_piece_moves(self, game_state):
         _peaceful_moves = []
