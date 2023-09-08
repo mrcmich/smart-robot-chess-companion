@@ -1,5 +1,5 @@
-from player import Player
-from piece import Piece
+from .player import Player
+from .piece import Piece
 
 
 class Pawn(Piece):

@@ -1,10 +1,10 @@
-from pieces.rook import Rook
-from pieces.knight import Knight
-from pieces.bishop import Bishop
-from pieces.pawn import Pawn
-from pieces.queen import Queen
-from pieces.king import King
-from player import Player
+from .rook import Rook
+from .knight import Knight
+from .bishop import Bishop
+from .pawn import Pawn
+from .queen import Queen
+from .king import King
+from .player import Player
 
 '''
 Internal representation of the indexes of the board cells:

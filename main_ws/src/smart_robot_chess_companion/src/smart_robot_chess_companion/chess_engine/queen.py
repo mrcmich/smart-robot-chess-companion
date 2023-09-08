@@ -1,5 +1,5 @@
-from rook import Rook
-from bishop import Bishop
+from .rook import Rook
+from .bishop import Bishop
 
 
 class Queen(Rook, Bishop):
