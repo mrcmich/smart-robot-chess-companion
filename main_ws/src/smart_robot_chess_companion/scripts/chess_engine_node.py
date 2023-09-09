@@ -60,7 +60,7 @@ def plan_user_move(game_state):
     while True:
         input_string = input("Select starting square coordinates (e.g. 'a2' for row 2 and column a): ")
         if not is_valid_input(input_string):
-            print("Error: wrong input format. Try again.")
+            rospy.logwarn("Error: wrong input format. Try again.")
             continue
         row = int(input_string[1])
         col = int(ord(input_string[0]) - ord('a') + 1)  # to map the character [a-h] in [1-8]
@@ -73,18 +73,18 @@ def plan_user_move(game_state):
 
         if not game_state.is_valid_piece(row, col) or not game_state.get_piece(row, col).is_player(Player.PLAYER_1):
             # Selected starting square is not valid
-            print("Error: the chosen starting square coordinates are not valid. Try again.")
+            rospy.logwarn("Error: the chosen starting square coordinates are not valid. Try again.")
             continue
 
         valid_moves = game_state.get_valid_moves(starting_square)
         if not valid_moves:
             # No valid moves for the chosen starting square
-            print("Error: no valid moves for the chosen piece. Try again with another piece.")
+            rospy.logwarn("Error: no valid moves for the chosen piece. Try again with another piece.")
             continue
 
         input_string = input("Select ending square coordinates (e.g. 'a4' for row 4 and column a): ")
         while not is_valid_input(input_string):
-            print("Error: wrong input format. Try again.\n")
+            rospy.logwarn("Error: wrong input format. Try again.\n")
             input_string = input("Select ending square coordinates (e.g. 'a4' for row 4 and column a): ")
         row = int(input_string[1])
         col = int(ord(input_string[0]) - ord('a') + 1)  # to map the character [a-h] in [1-8]
@@ -97,7 +97,7 @@ def plan_user_move(game_state):
 
         # Check that the selected ending square is a valid move
         if ending_square not in valid_moves:
-            print("Error: the chosen move is not valid for the chosen piece. Try again with another move or another piece.")
+            rospy.logwarn("Error: the chosen move is not valid for the chosen piece. Try again with another move or another piece.")
             continue
         else:
             break
@@ -172,25 +172,28 @@ def chess_engine_node():
         callback=update_board_state, 
         callback_args=[input]
     )
-    print("Starting the match.")
-    game_state.print_board()
+    rospy.logwarn("Starting the match.")
+    game_state.rospy.logwarn_board()
     
     while not rospy.is_shutdown():
         if not game_over:
             if is_user_turn:
-                print("User's turn.")
+                rospy.logwarn("User's turn.")
                 user_move = plan_user_move(game_state)
                 user_move_message = compose_move_ros_messages(user_move, game_state)
                 move_chess_piece_command_publisher.publish(user_move_message)
+                game_state.print_board()
                 is_user_turn = False
             
             elif last_timestamp is None or last_timestamp != input['last_timestamp']:
-                print("AI's turn.")
+                rospy.logwarn("AI's turn.")
                 # Due to computing and algorithmic limitations, we limit the AI to reading only three moves ahead (depth=3)
                 ai_move = ai.minimax(game_state, 3, -100000, 100000, True, Player.PLAYER_2)
                 ai_move_message = compose_move_ros_messages(ai_move, game_state)
                 move_chess_piece_command_publisher.publish(ai_move_message)
                 game_state.move_piece(starting_square=ai_move[0], ending_square=ai_move[1], is_ai=True)
+                rospy.logwarn(f"AI moves from {to_string_representation(ai_move[0])} to {to_string_representation(ai_move[1])}")
+                game_state.print_board()
                 is_user_turn = True
                 last_timestamp = input['last_timestamp']
 

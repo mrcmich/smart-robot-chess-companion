@@ -1,3 +1,4 @@
+import rospy
 from .rook import Rook
 from .knight import Knight
 from .bishop import Bishop
@@ -114,7 +115,7 @@ class GameState:
 
     def print_board(self):
         """Debugging function that prints the state of the board."""
-        print("  a b c d e f g h")
+        rospy.logwarn("  a b c d e f g h")
         for row in range(8):
             row_str = str(8 - row) + " "
             for col in range(8):
@@ -123,7 +124,7 @@ class GameState:
                     row_str += ". "
                 else:
                     row_str += piece.get_name() + " "
-            print(row_str)
+            rospy.logwarn(row_str)
 
     def is_valid_piece(self, row, col):
         evaluated_piece = self.get_piece(row, col)
