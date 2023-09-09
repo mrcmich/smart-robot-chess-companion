@@ -1,11 +1,21 @@
 #! /usr/bin/env python
 
 import smart_robot_chess_companion.pick_and_place.config as config
-from smart_robot_chess_companion.pick_and_place.pick_and_place import move_chess_piece
+from smart_robot_chess_companion.pick_and_place.pick_and_place import RobotChessCompanion
 from ur_control import arm, constants
 import rospy
 
-def test_chess_piece_capturing(robot_arm):
+def ur3e_capturing_tester_node():
+    rospy.init_node('ur3e_capturing_tester_node', log_level=rospy.DEBUG)
+    robot_arm = arm.Arm(ft_sensor=True, gripper=constants.GENERIC_GRIPPER) 
+    robot_chess_companion = RobotChessCompanion(
+        robot_arm,
+        config.REST_ROBOT_ARM_CONFIGURATION,
+        config.RIGHT_ARM_ROBOT_ARM_CONFIGURATION,
+        config.LEFT_ARM_ROBOT_ARM_CONFIGURATION,
+        config.DEFAULT_GRASP_CONFIGURATIONS_DICT,
+        config.OPEN_GRIPPER_POSITION
+    )
     n_captured_chess_pieces = 0
     cell_mapping = {
         'a1': 'rook',
@@ -41,29 +51,25 @@ def test_chess_piece_capturing(robot_arm):
         'g7': 'pawn',
         'h7': 'pawn',
     }
-
+    
     for starting_cell in cell_mapping:
         chess_piece_type = cell_mapping[starting_cell]
         final_cell = config.MAPPING_N_CAPTURED_CHESS_PIECES_CELL[n_captured_chess_pieces]
-        print(f'Capturing chess piece {chess_piece_type} in cell {starting_cell}...')
-        move_chess_piece(
-            robot_arm, 
+        rospy.logdebug(f'n_captured_chess_pieces={n_captured_chess_pieces}')
+        rospy.logdebug(f'Capturing chess piece {chess_piece_type} in cell {starting_cell}...')
+        robot_chess_companion.move_chess_piece(
             chess_piece_type, 
             starting_cell, 
-            final_cell, 
-            grasp_positions_z_dict=config.DEFAULT_GRASP_POSITIONS_Z_DICT,
-            grasp_gripper_positions_dict=config.DEFAULT_GRASP_GRIPPER_POSITIONS_DICT, 
+            final_cell
         )
         n_captured_chess_pieces += 1
+        rospy.sleep(0.5)
 
-def main():
-    rospy.init_node('ur3e_script_control', log_level=rospy.DEBUG)
-    robot_arm = arm.Arm(ft_sensor=True, gripper=constants.GENERIC_GRIPPER) 
-    robot_arm.set_joint_positions(position=config.REST_ROBOT_ARM_CONFIGURATION, wait=True, t=0.5)
-    robot_arm.gripper.command(config.OPEN_GRIPPER_POSITION)
-    test_chess_piece_capturing(robot_arm)
-    print('All tests completed!')
-    
-if __name__ == "__main__":
-    main()
+    rospy.logdebug('All tests completed!')
+
+if __name__ == '__main__':
+    try:
+        ur3e_capturing_tester_node()
+    except rospy.ROSInterruptException:
+        pass
     
