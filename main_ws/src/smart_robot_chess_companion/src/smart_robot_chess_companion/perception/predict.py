@@ -26,7 +26,7 @@ def predict(model_checkpoint_path: str, img: np.ndarray, device: str) -> Tuple[D
     image_h, image_w, _ = img.shape
     
     model = YOLO(model_checkpoint_path)
-    detections = model.predict(img, imgsz=image_h, conf=0.5, device=device, save_txt=False, save=False)
+    detections = model.predict(img, imgsz=image_h, conf=0.5, device=device, save_txt=False, save=False, verbose=False)
     
     for cur_detection in detections:
         class_names = cur_detection.names
