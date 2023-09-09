@@ -22,13 +22,13 @@ def update_camera_view_state(message: Any, *args: Any) -> None:
 
 def read_image(message: Any, *args: Any) -> None:
     input = args[0][0]
-    input['image'] = message  # TODO: read correctly the image as np.array
+    input['image'] = message
 
 
 def perception_node() -> None:
     
     rospy.init_node('perception_script', anonymous=True)
-    rate = rospy.Rate(1)
+    rate = rospy.Rate(2)
     
     bridge = CvBridge()
     
@@ -52,14 +52,16 @@ def perception_node() -> None:
 
     last_board_state_matrix = None
     ratio = 640 / 720
+    last_msg_sent = None
     while not rospy.is_shutdown():
         if input['is_camera_view_free'] and input['image'] is not None:
             img = bridge.imgmsg_to_cv2(input['image'], 'bgr8')
             resized_img = cv2.resize(img[:, 280:-280, :], (0, 0), fx=ratio, fy=ratio, interpolation=cv2.INTER_AREA)
             board_state_dict, board_state_matrix = predict.predict(model_checkpoint_path=config.MODEL_CHECKPOINT_PATH, img=resized_img, device=config.DEVICE)
             if last_board_state_matrix is None or not np.all(board_state_matrix == last_board_state_matrix):
-                message = utils.dict_to_string_ros_message(board_state_dict)
-                board_state_publisher.publish(message)
+                last_msg_sent = utils.dict_to_string_ros_message(board_state_dict)
+            
+            board_state_publisher.publish(last_msg_sent)
         
         rate.sleep()
 
