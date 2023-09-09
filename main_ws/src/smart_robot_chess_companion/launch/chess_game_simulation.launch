@@ -12,5 +12,5 @@
     <arg name="rate"   value="$(arg rate)" />
   </include>
   
-  <node name="ur3e_script_chess_game_controller" pkg="smart_robot_chess_companion" type="ur3e_script_chess_game_controller.py" respawn="false" />
+  <node name="ur3e_puppeteer_node" pkg="smart_robot_chess_companion" type="ur3e_puppeteer_node.py" respawn="false" />
 </launch>
