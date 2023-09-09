@@ -41,7 +41,7 @@ def predict(model_checkpoint_path: str, img: np.ndarray, device: str) -> Tuple[D
             cell_col = np.where((x >= ranges[:, 0]) & (x < ranges[:, 1]))[0]
             cell_row = np.where((y >= ranges[:, 0]) & (y < ranges[:, 1]))[0]
             if len(cell_col) != 1 or len(cell_row) != 1:
-                rospy.logwarn("WARNING: piece detected out of board, skipping it...")
+                rospy.logdebug("WARNING: piece detected out of board, skipping it...")
                 continue
             cell_col = cell_col[0].item(0)
             cell_row = 7 - cell_row[0].item(0)

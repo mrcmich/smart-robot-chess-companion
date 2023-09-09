@@ -27,7 +27,7 @@ def read_image(message: Any, *args: Any) -> None:
 
 def perception_node() -> None:
     
-    rospy.init_node('perception_script', anonymous=True)
+    rospy.init_node('perception_script', anonymous=True, log_level=rospy.DEBUG)
     rate = rospy.Rate(2)
     
     bridge = CvBridge()
