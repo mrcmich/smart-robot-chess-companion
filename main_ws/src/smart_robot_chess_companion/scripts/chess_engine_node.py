@@ -33,30 +33,25 @@ def compose_move_ros_messages(move, game_state):
     move_ending_square = to_string_representation(move[1])
     move_chess_piece_type = game_state.get_piece(move[0]).get_type()
 
-    if game_state.get_piece(move[1]) == Player.EMPTY:
-        move_msg = utils.dict_to_string_ros_message({
-            'chess_piece_type': move_chess_piece_type, 
-            'starting_cell': move_starting_square, 
-            'final_cell': move_ending_square
-        })
-
-        return [move_msg]
-
-    capture_chess_piece_type = game_state.get_piece(move[1]).get_type()
-
-    capture_msg = ({
-        'chess_piece_type': capture_chess_piece_type, 
-        'starting_cell': move_ending_square, 
-        'final_cell': None
-    })
-
-    move_msg = utils.dict_to_string_ros_message({
+    move_dict = {
         'chess_piece_type': move_chess_piece_type, 
         'starting_cell': move_starting_square, 
         'final_cell': move_ending_square
-    })
+    }
 
-    return [capture_msg, move_msg]
+    capture_dict = None
+    if game_state.get_piece(move[1]) != Player.EMPTY:
+        capture_chess_piece_type = game_state.get_piece(move[1]).get_type()
+        capture_dict = {
+            'chess_piece_type': capture_chess_piece_type, 
+            'starting_cell': move_ending_square, 
+            'final_cell': None
+        }
+
+    return utils.dict_to_string_ros_message({
+        'move': move_dict,
+        'capture': capture_dict
+    })
 
 def plan_user_move(game_state):
     starting_square = None
@@ -164,8 +159,8 @@ def update_board_state(board_state_message, *args):
 def chess_engine_node():
     rospy.init_node('chess_engine_node')
     rate = rospy.Rate(2)
-    move_chess_piece_command_publisher = rospy.Publisher('move_chess_piece_cmd', String, queue_size=10)
-    running = True
+    move_chess_piece_command_publisher = rospy.Publisher('u3re_puppeteer_node_cmd', String, queue_size=10)
+    is_user_turn = True
     game_over = False
     ai = ai_engine.AIEngine()
     game_state = chess_engine.GameState()
@@ -180,41 +175,24 @@ def chess_engine_node():
     print("Starting the match.")
     game_state.print_board()
     
-    while running:
+    while not rospy.is_shutdown():
         if not game_over:
-            print("User's turn.")
-            user_move = plan_user_move(game_state)
-
-            # TODO: remove the following lines
-            # game_state.move_piece(user_move[0], user_move[1], False)
-            # game_state.print_board()
-
-            # TODO: need to pass user_move to the robot system using ROS topics.
-            #  The robot moves the piece for the user.
-            #  Then there's the detection phase.
-            #  Then, I should take the JSON file coming from the detection and update the board state.
-            user_move_messages = compose_move_ros_messages(user_move, game_state)
-
-            for msg in user_move_messages:
-                move_chess_piece_command_publisher(msg)
-
-            print("AI's turn.")
-            # Due to computing and algorithmic limitations, we limit the AI to reading only three moves ahead (depth=3)
-            ai_move = ai.minimax(game_state, 3, -100000, 100000, True, Player.PLAYER_2)
+            if is_user_turn:
+                print("User's turn.")
+                user_move = plan_user_move(game_state)
+                user_move_message = compose_move_ros_messages(user_move, game_state)
+                move_chess_piece_command_publisher.publish(user_move_message)
+                is_user_turn = False
             
-            # TODO: remove the following lines
-            # game_state.move_piece(ai_move[0], ai_move[1], True)
-            # print(
-            #     f"AI moves from {chr(ord('a') + ai_move[0][1])}{ai_move[0][0] + 1} to {chr(ord('a') + ai_move[1][1])}{ai_move[1][0] + 1}")
-            # game_state.print_board()
-            
-            # TODO: need to pass ai_move to the robot system using ROS topics.
-            #  The robot moves the piece for the AI.
-            #  Then there's NO detection.
-            ai_move_messages = compose_move_ros_messages(ai_move, game_state)
-
-            for msg in ai_move_messages:
-                move_chess_piece_command_publisher(msg)
+            elif last_timestamp is None or last_timestamp != input['last_timestamp']:
+                print("AI's turn.")
+                # Due to computing and algorithmic limitations, we limit the AI to reading only three moves ahead (depth=3)
+                ai_move = ai.minimax(game_state, 3, -100000, 100000, True, Player.PLAYER_2)
+                ai_move_message = compose_move_ros_messages(ai_move, game_state)
+                move_chess_piece_command_publisher.publish(ai_move_message)
+                game_state.move_piece(starting_square=ai_move[0], ending_square=ai_move[1], is_ai=True)
+                is_user_turn = True
+                last_timestamp = input['last_timestamp']
 
         endgame = game_state.checkmate_stalemate_checker()
         if endgame == 0:
