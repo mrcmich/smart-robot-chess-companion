@@ -192,18 +192,21 @@ def chess_engine_node():
                 ai_move_message = compose_move_ros_messages(ai_move, game_state)
                 move_chess_piece_command_publisher.publish(ai_move_message)
                 game_state.move_piece(starting_square=ai_move[0], ending_square=ai_move[1], is_ai=True)
-                rospy.logwarn(f"AI moves from {to_string_representation(ai_move[0])} to {to_string_representation(ai_move[1])}")
+                rospy.logwarn(f"AI moves from {to_string_representation(ai_move[0])} to {to_string_representation(ai_move[1])}.")
                 game_state.print_board()
                 is_user_turn = True
                 last_timestamp = input['last_timestamp']
 
         endgame = game_state.checkmate_stalemate_checker()
         if endgame == 0:
-            game_over = True  # Black wins
+            game_over = True
+            rospy.logwarn("Black wins.")
         elif endgame == 1:
-            game_over = True  # White wins
+            game_over = True
+            rospy.logwarn("White wins.")
         elif endgame == 2:
-            game_over = True  # Stalemate
+            game_over = True
+            rospy.logwarn("Stalemate.")
         
         rate.sleep() 
 
