@@ -173,7 +173,7 @@ def chess_engine_node():
         callback_args=[input]
     )
     rospy.logwarn("Starting the match.")
-    game_state.rospy.logwarn_board()
+    game_state.print_board()
     
     while not rospy.is_shutdown():
         if not game_over:
