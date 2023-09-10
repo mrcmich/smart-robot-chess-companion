@@ -47,11 +47,13 @@ def ur3e_puppeteer_node():
         callback_args=[input, output],
         queue_size=10
     )
-    game_start = True
 
+    is_first_move_done = False
+    
     while not rospy.is_shutdown():
-        is_camera_view_free = False if game_start else True
         rospy.logdebug(f'command queue: {output}')
+        
+        is_camera_view_free = is_first_move_done
 
         if len(output) == 0:
             is_camera_view_free_publisher.publish(is_camera_view_free)
@@ -61,9 +63,9 @@ def ur3e_puppeteer_node():
         cmd = output.pop(0)
 
         if cmd['timestamp'] is not None and cmd['timestamp'] != last_timestamp:
-            game_start = False if game_start else game_start
+            is_first_move_done = True
 
-            is_camera_view_free_publisher.publish(not is_camera_view_free)
+            is_camera_view_free_publisher.publish(False)
             move_cmd = cmd['move']
             capture_cmd = cmd['capture']
 
@@ -82,7 +84,7 @@ def ur3e_puppeteer_node():
             )
             
             last_timestamp = cmd['timestamp']
-            is_camera_view_free_publisher.publish(is_camera_view_free)
+            is_camera_view_free_publisher.publish(True)
         else:
             is_camera_view_free_publisher.publish(is_camera_view_free)
         
