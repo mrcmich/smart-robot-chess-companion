@@ -31,6 +31,7 @@ def to_string_representation(chess_board_square_coordinates):
 def compose_move_ros_messages(move, game_state):
     move_starting_square = to_string_representation(move[0])
     move_ending_square = to_string_representation(move[1])
+    rospy.logdebug(f'move_chess_piece_type -> {type(game_state.get_piece(*move[0]))}')
     move_chess_piece_type = game_state.get_piece(*move[0]).get_type()
 
     move_dict = {
@@ -164,6 +165,8 @@ def update_board_state(board_state_message, *args):
             key = str(row_index) + str(col_index)
             board_cell_player_mapping[key] = chess_piece['player']
             board_state_array[row_index, col_index] = chess_piece_name_unicode
+        
+        rospy.logdebug(f'Received state of pieces: {list(board_state_message_data_dict.keys())}')
             
         for i in range(8):
             for j in range(8):
@@ -186,6 +189,7 @@ def update_board_state(board_state_message, *args):
 
         key = str(final_cell[0]) + str(final_cell[1])
         player = board_cell_player_mapping[key]
+        rospy.logdebug(f'move: {starting_cell}, {final_cell}; player: {player}')
         game_state.move_piece(starting_cell, final_cell, player == "black")
 
 def chess_engine_node():
