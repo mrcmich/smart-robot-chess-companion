@@ -11,16 +11,17 @@ from .player import Player
 Internal representation of the indexes of the board cells:
 
 r / c     0           1           2           3           4           5           6           7 
-7   [(r=7, c=0), (r=7, c=1), (r=7, c=2), (r=7, c=3), (r=7, c=4), (r=7, c=5), (r=7, c=6), (r=7, c=7)]
-6   [(r=6, c=0), (r=6, c=1), (r=6, c=2), (r=6, c=3), (r=6, c=4), (r=6, c=5), (r=6, c=6), (r=6, c=7)]
-5   [(r=5, c=0), (r=5, c=1), (r=5, c=2), (r=5, c=3), (r=5, c=4), (r=5, c=5), (r=5, c=6), (r=5, c=7)]
-4   [(r=4, c=0), (r=4, c=1), (r=4, c=2), (r=4, c=3), (r=4, c=4), (r=4, c=5), (r=4, c=6), (r=4, c=7)]
-3   [(r=3, c=0), (r=3, c=1), (r=3, c=2), (r=3, c=3), (r=3, c=4), (r=3, c=5), (r=3, c=6), (r=3, c=7)]
-2   [(r=2, c=0), (r=2, c=1), (r=2, c=2), (r=2, c=3), (r=2, c=4), (r=2, c=5), (r=2, c=6), (r=2, c=7)]
-1   [(r=1, c=0), (r=1, c=1), (r=1, c=2), (r=1, c=3), (r=1, c=4), (r=1, c=5), (r=1, c=6), (r=1, c=7)]
 0   [(r=0, c=0), (r=0, c=1), (r=0, c=2), (r=0, c=3), (r=0, c=4), (r=0, c=5), (r=0, c=6), (r=0, c=7)]
-'''
+1   [(r=1, c=0), (r=1, c=1), (r=1, c=2), (r=1, c=3), (r=1, c=4), (r=1, c=5), (r=1, c=6), (r=1, c=7)]
+2   [(r=2, c=0), (r=2, c=1), (r=2, c=2), (r=2, c=3), (r=2, c=4), (r=2, c=5), (r=2, c=6), (r=2, c=7)]
+3   [(r=3, c=0), (r=3, c=1), (r=3, c=2), (r=3, c=3), (r=3, c=4), (r=3, c=5), (r=3, c=6), (r=3, c=7)]
+4   [(r=4, c=0), (r=4, c=1), (r=4, c=2), (r=4, c=3), (r=4, c=4), (r=4, c=5), (r=4, c=6), (r=4, c=7)]
+5   [(r=5, c=0), (r=5, c=1), (r=5, c=2), (r=5, c=3), (r=5, c=4), (r=5, c=5), (r=5, c=6), (r=5, c=7)]
+6   [(r=6, c=0), (r=6, c=1), (r=6, c=2), (r=6, c=3), (r=6, c=4), (r=6, c=5), (r=6, c=6), (r=6, c=7)]
+7   [(r=7, c=0), (r=7, c=1), (r=7, c=2), (r=7, c=3), (r=7, c=4), (r=7, c=5), (r=7, c=6), (r=7, c=7)]
 
+N.B. White pieces initially occupy rows 0-1, black pieces initially occupy rows 6-7!
+'''
 
 # TODO: stalemate
 # TODO: move logs - fix king castle boolean update
@@ -85,22 +86,16 @@ class GameState:
         black_pawn_8 = Pawn('p', 6, 7, Player.PLAYER_2)
 
         self._board = [
-            [white_rook_1, white_knight_1, white_bishop_1, white_king, white_queen, white_bishop_2, white_knight_2,
-             white_rook_2],
-            [white_pawn_1, white_pawn_2, white_pawn_3, white_pawn_4, white_pawn_5, white_pawn_6, white_pawn_7,
-             white_pawn_8],
-            [Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY,
-             Player.EMPTY],
-            [Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY,
-             Player.EMPTY],
-            [Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY,
-             Player.EMPTY],
-            [Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY,
-             Player.EMPTY],
-            [black_pawn_1, black_pawn_2, black_pawn_3, black_pawn_4, black_pawn_5, black_pawn_6, black_pawn_7,
-             black_pawn_8],
-            [black_rook_1, black_knight_1, black_bishop_1, black_king, black_queen, black_bishop_2, black_knight_2,
-             black_rook_2]
+        #    7             6               5               4             3             2               1               0              <-- chess board indexing
+        #    0             1               2               3             4             5               6               7              <-- self._board indexing
+            [white_rook_1, white_knight_1, white_bishop_1, white_king,   white_queen,  white_bishop_2, white_knight_2, white_rook_2], # 0
+            [white_pawn_1, white_pawn_2,   white_pawn_3,   white_pawn_4, white_pawn_5, white_pawn_6,   white_pawn_7,   white_pawn_8], # 1
+            [Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY, Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY], # 2
+            [Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY, Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY], # 3
+            [Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY, Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY], # 4
+            [Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY, Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY], # 5
+            [black_pawn_1, black_pawn_2,   black_pawn_3,   black_pawn_4, black_pawn_5, black_pawn_6,   black_pawn_7,   black_pawn_8], # 6
+            [black_rook_1, black_knight_1, black_bishop_1, black_king,   black_queen,  black_bishop_2, black_knight_2, black_rook_2]  # 7
         ]
 
     @property
