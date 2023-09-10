@@ -159,7 +159,7 @@ def update_board_state(board_state_message, *args):
 def chess_engine_node():
     rospy.init_node('chess_engine_node', anonymous=True, log_level=rospy.DEBUG)
     rate = rospy.Rate(2)
-    move_chess_piece_command_publisher = rospy.Publisher('u3re_puppeteer_node_cmd', String, queue_size=10)
+    move_chess_piece_command_publisher = rospy.Publisher('ur3e_puppeteer_node_cmd', String, queue_size=10)
     is_user_turn = True
     game_over = False
     ai = ai_engine.AIEngine()
