@@ -31,7 +31,7 @@ def to_string_representation(chess_board_square_coordinates):
 def compose_move_ros_messages(move, game_state):
     move_starting_square = to_string_representation(move[0])
     move_ending_square = to_string_representation(move[1])
-    move_chess_piece_type = game_state.get_piece(move[0]).get_type()
+    move_chess_piece_type = game_state.get_piece(*move[0]).get_type()
 
     move_dict = {
         'chess_piece_type': move_chess_piece_type, 
@@ -40,8 +40,8 @@ def compose_move_ros_messages(move, game_state):
     }
 
     capture_dict = None
-    if game_state.get_piece(move[1]) != Player.EMPTY:
-        capture_chess_piece_type = game_state.get_piece(move[1]).get_type()
+    if game_state.get_piece(*move[1]) != Player.EMPTY:
+        capture_chess_piece_type = game_state.get_piece(*move[1]).get_type()
         capture_dict = {
             'chess_piece_type': capture_chess_piece_type, 
             'starting_cell': move_ending_square, 
