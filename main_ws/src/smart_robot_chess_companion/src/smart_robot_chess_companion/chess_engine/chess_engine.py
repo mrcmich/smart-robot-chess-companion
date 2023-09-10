@@ -21,6 +21,7 @@ r / c     0           1           2           3           4           5         
 0   [(r=0, c=0), (r=0, c=1), (r=0, c=2), (r=0, c=3), (r=0, c=4), (r=0, c=5), (r=0, c=6), (r=0, c=7)]
 
 N.B. White pieces initially occupy rows 0-1, black pieces initially occupy rows 6-7!
+
 '''
 
 # TODO: stalemate
@@ -84,24 +85,19 @@ class GameState:
         black_pawn_6 = Pawn('p', 6, 5, Player.PLAYER_2)
         black_pawn_7 = Pawn('p', 6, 6, Player.PLAYER_2)
         black_pawn_8 = Pawn('p', 6, 7, Player.PLAYER_2)
-
+        
+        # see row and column comments for indexing against physical chess board
+        # n.b. rows are stored from the one closest to the player (asssumed to be playing white) to the one closest to the robot!
         self._board = [
-            [white_rook_1, white_knight_1, white_bishop_1, white_queen, white_king, white_bishop_2, white_knight_2,
-             white_rook_2],
-            [white_pawn_1, white_pawn_2, white_pawn_3, white_pawn_4, white_pawn_5, white_pawn_6, white_pawn_7,
-             white_pawn_8],
-            [Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY,
-             Player.EMPTY],
-            [Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY,
-             Player.EMPTY],
-            [Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY,
-             Player.EMPTY],
-            [Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY,
-             Player.EMPTY],
-            [black_pawn_1, black_pawn_2, black_pawn_3, black_pawn_4, black_pawn_5, black_pawn_6, black_pawn_7,
-             black_pawn_8],
-            [black_rook_1, black_knight_1, black_bishop_1, black_queen, black_king, black_bishop_2, black_knight_2,
-             black_rook_2]
+        #    a             b               c               d             e             f               g               h
+            [white_rook_1, white_knight_1, white_bishop_1, white_queen,  white_king,   white_bishop_2, white_knight_2, white_rook_2], # 1
+            [white_pawn_1, white_pawn_2,   white_pawn_3,   white_pawn_4, white_pawn_5, white_pawn_6,   white_pawn_7,   white_pawn_8], # 2
+            [Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY, Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY], # 3
+            [Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY, Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY], # 4            
+            [Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY, Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY], # 5            
+            [Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY, Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY], # 6             
+            [black_pawn_1, black_pawn_2,   black_pawn_3,   black_pawn_4, black_pawn_5, black_pawn_6,   black_pawn_7,   black_pawn_8], # 7         
+            [black_rook_1, black_knight_1, black_bishop_1, black_queen,  black_king,   black_bishop_2, black_knight_2, black_rook_2]  # 8           
         ]
 
     @property

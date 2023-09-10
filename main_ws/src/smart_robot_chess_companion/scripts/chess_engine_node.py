@@ -104,57 +104,89 @@ def plan_user_move(game_state):
 
     return starting_square, ending_square
 
-# board_state_dict: dictionary representation of the current board state as received from perception_node ros node
-def compute_move_and_player(board_state_dict, last_board_state):
-    board_state_array = np.ones((8, 8))
-    last_board_state_array = np.ones((8, 8))
-    board_cell_player_mapping = {}
-
-    for chess_piece in board_state_dict.values():
-        chess_piece_name_unicode = ord(chess_piece['name'])
-        row_index = 7 - chess_piece['row_number']
-        col_index = chess_piece['col_number']
-        key = str(row_index) + str(col_index)
-        board_cell_player_mapping[key] = chess_piece['player']
-        board_state_array[row_index, col_index] = chess_piece_name_unicode
-        
-    for i in range(8):
-        for j in range(8):
-            elem_ij = last_board_state[i][j]
-
-            if isinstance(elem_ij, Piece):
-                last_board_state_array[i][j] = ord(elem_ij.get_name())
-
-    board_state_difference = board_state_array - last_board_state_array
-    nz = board_state_difference.nonzero()
-    i1, j1 = nz[0][0], nz[1][0]
-    i2, j2 = nz[0][1], nz[1][1]
-
-    if board_state_array[i1, j1] == 1:
-        starting_cell = i1, j1
-        final_cell = i2, j2
-    else:
-        starting_cell = i2, j2
-        final_cell = i1, j1   
-
-    key = str(starting_cell[0]) + str(starting_cell[1])
-    player = board_cell_player_mapping[key]
-	
-    return ((starting_cell, final_cell), player)
-
 def update_board_state(board_state_message, *args):
     input = args[0][0]
     last_timestamp = input['last_timestamp']
     board_state_message_data_dict = utils.dict_from_string_ros_message(board_state_message)
     timestamp = board_state_message_data_dict['timestamp']
     del board_state_message_data_dict['timestamp']
+    
+    # uso di board_state_message_data_dict fittizio per debugging dopo mossa d2 -> d4
+    '''
+    board_state_message_data_dict = {
+        'white_pawn_1': {'name': 'p', 'col_number': 0, 'row_number': 1, 'player': 'white'},
+        'white_pawn_2': {'name': 'p', 'col_number': 1, 'row_number': 1, 'player': 'white'},
+        'white_pawn_3': {'name': 'p', 'col_number': 2, 'row_number': 1, 'player': 'white'},
+        'white_pawn_4': {'name': 'p', 'col_number': 3, 'row_number': 3, 'player': 'white'},
+        'white_pawn_5': {'name': 'p', 'col_number': 4, 'row_number': 1, 'player': 'white'},
+        'white_pawn_6': {'name': 'p', 'col_number': 5, 'row_number': 1, 'player': 'white'},
+        'white_pawn_7': {'name': 'p', 'col_number': 6, 'row_number': 1, 'player': 'white'},
+        'white_pawn_8': {'name': 'p', 'col_number': 7, 'row_number': 1, 'player': 'white'},
+        'white_rook_1':   {'name': 'r', 'col_number': 0, 'row_number': 0, 'player': 'white'},
+        'white_knight_1': {'name': 'n', 'col_number': 1, 'row_number': 0, 'player': 'white'},
+        'white_bishop_1': {'name': 'b', 'col_number': 2, 'row_number': 0, 'player': 'white'},
+        'white_queen':    {'name': 'q', 'col_number': 3, 'row_number': 0, 'player': 'white'},
+        'white_king':     {'name': 'k', 'col_number': 4, 'row_number': 0, 'player': 'white'},
+        'white_bishop_2': {'name': 'b', 'col_number': 5, 'row_number': 0, 'player': 'white'},
+        'white_knight_2': {'name': 'n', 'col_number': 6, 'row_number': 0, 'player': 'white'},
+        'white_rook_2':   {'name': 'r', 'col_number': 7, 'row_number': 0, 'player': 'white'},
+        'black_pawn_1': {'name': 'p', 'col_number': 0, 'row_number': 6, 'player': 'black'},
+        'black_pawn_2': {'name': 'p', 'col_number': 1, 'row_number': 6, 'player': 'black'},
+        'black_pawn_3': {'name': 'p', 'col_number': 2, 'row_number': 6, 'player': 'black'},
+        'black_pawn_4': {'name': 'p', 'col_number': 3, 'row_number': 6, 'player': 'black'},
+        'black_pawn_5': {'name': 'p', 'col_number': 4, 'row_number': 6, 'player': 'black'},
+        'black_pawn_6': {'name': 'p', 'col_number': 5, 'row_number': 6, 'player': 'black'},
+        'black_pawn_7': {'name': 'p', 'col_number': 6, 'row_number': 6, 'player': 'black'},
+        'black_pawn_8': {'name': 'p', 'col_number': 7, 'row_number': 6, 'player': 'black'},
+        'black_rook_1':   {'name': 'r', 'col_number': 0, 'row_number': 7, 'player': 'black'},
+        'black_knight_1': {'name': 'n', 'col_number': 1, 'row_number': 7, 'player': 'black'},
+        'black_bishop_1': {'name': 'b', 'col_number': 2, 'row_number': 7, 'player': 'black'},
+        'black_queen':    {'name': 'q', 'col_number': 3, 'row_number': 7, 'player': 'black'},
+        'black_king':     {'name': 'k', 'col_number': 4, 'row_number': 7, 'player': 'black'},
+        'black_bishop_2': {'name': 'b', 'col_number': 5, 'row_number': 7, 'player': 'black'},
+        'black_knight_2': {'name': 'n', 'col_number': 6, 'row_number': 7, 'player': 'black'},
+        'black_rook_2':   {'name': 'r', 'col_number': 7, 'row_number': 7, 'player': 'black'},
+    }
+    '''
 
     if not input['is_user_turn'] and last_timestamp != timestamp:
         input['last_timestamp'] = timestamp
         game_state = input['game_state']
-        last_board_state = game_state.get_board
-        move, player = compute_move_and_player(board_state_message_data_dict, last_board_state)
-        game_state.move_piece(move[0], move[1], player == "black")
+
+        board_state_array = np.ones((8, 8))
+        last_board_state_array = np.ones((8, 8))
+        board_cell_player_mapping = {}
+
+        for chess_piece in board_state_message_data_dict.values():
+            chess_piece_name_unicode = ord(chess_piece['name'])
+            row_index = chess_piece['row_number']
+            col_index = chess_piece['col_number']
+            key = str(row_index) + str(col_index)
+            board_cell_player_mapping[key] = chess_piece['player']
+            board_state_array[row_index, col_index] = chess_piece_name_unicode
+            
+        for i in range(8):
+            for j in range(8):
+                elem_ij = game_state.get_piece(i, j)
+
+                if isinstance(elem_ij, Piece):
+                    last_board_state_array[i][j] = ord(elem_ij.get_name())
+
+        board_state_difference = board_state_array - last_board_state_array
+        nz = board_state_difference.nonzero()
+        i1, j1 = nz[0][0], nz[1][0]
+        i2, j2 = nz[0][1], nz[1][1]
+
+        if board_state_array[i1, j1] == 1:
+            starting_cell = i1, j1
+            final_cell = i2, j2
+        else:
+            starting_cell = i2, j2
+            final_cell = i1, j1   
+
+        key = str(final_cell[0]) + str(final_cell[1])
+        player = board_cell_player_mapping[key]
+        game_state.move_piece(starting_cell, final_cell, player == "black")
 
 def chess_engine_node():
     rospy.init_node('chess_engine_node', anonymous=True, log_level=rospy.DEBUG)
