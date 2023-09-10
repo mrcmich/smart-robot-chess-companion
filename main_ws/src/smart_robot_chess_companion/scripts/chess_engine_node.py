@@ -110,7 +110,7 @@ def compute_move_and_player(board_state_dict, last_board_state):
     last_board_state_array = np.ones((8, 8))
     board_cell_player_mapping = {}
 
-    for chess_piece in board_state_dict:
+    for chess_piece in board_state_dict.values():
         chess_piece_name_unicode = ord(chess_piece['name'])
         row_index = chess_piece['row_number']
         col_index = chess_piece['col_number']
@@ -149,7 +149,7 @@ def update_board_state(board_state_message, *args):
     timestamp = board_state_message_data_dict['timestamp']
     del board_state_message_data_dict['timestamp']
 
-    if last_timestamp is None or last_timestamp != timestamp:
+    if not input['is_user_turn'] and last_timestamp != timestamp:
         input['last_timestamp'] = timestamp
         game_state = input['game_state']
         last_board_state = game_state.get_board
@@ -165,7 +165,7 @@ def chess_engine_node():
     ai = ai_engine.AIEngine()
     game_state = chess_engine.GameState()
     last_timestamp = None
-    input = { 'game_state': game_state, 'last_timestamp': last_timestamp }
+    input = { 'game_state': game_state, 'last_timestamp': last_timestamp, 'is_user_turn': is_user_turn }
     board_state_subscriber = rospy.Subscriber(
         'board_state', 
         String, 
@@ -182,11 +182,12 @@ def chess_engine_node():
                 user_move = plan_user_move(game_state)
                 user_move_message = compose_move_ros_messages(user_move, game_state)
                 move_chess_piece_command_publisher.publish(user_move_message)
-                game_state.print_board()
                 is_user_turn = False
+                input['is_user_turn'] = False
             
-            elif last_timestamp is None or last_timestamp != input['last_timestamp']:
+            elif input['last_timestamp'] is not None and last_timestamp != input['last_timestamp']:
                 rospy.logdebug("AI's turn.")
+                game_state.print_board()
                 # Due to computing and algorithmic limitations, we limit the AI to reading only three moves ahead (depth=3)
                 ai_move = ai.minimax(game_state, 3, -100000, 100000, True, Player.PLAYER_2)
                 ai_move_message = compose_move_ros_messages(ai_move, game_state)
@@ -195,6 +196,7 @@ def chess_engine_node():
                 rospy.logdebug(f"AI moves from {to_string_representation(ai_move[0])} to {to_string_representation(ai_move[1])}.")
                 game_state.print_board()
                 is_user_turn = True
+                input['is_user_turn'] = is_user_turn
                 last_timestamp = input['last_timestamp']
 
         endgame = game_state.checkmate_stalemate_checker()

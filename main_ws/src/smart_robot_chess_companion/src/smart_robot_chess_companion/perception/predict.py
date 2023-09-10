@@ -49,6 +49,6 @@ def predict(model_checkpoint_path: str, img: np.ndarray, device: str) -> Tuple[D
             key = f'{player}_{piece}'
             if not piece in ['queen', 'king']:
                 key += f'_{piece_counter[class_names[cls_idx]]}'
-            chess_state_dict[key] = {'name': piece_2_name[piece], 'col': cell_col, 'row': cell_row, 'player': player}
+            chess_state_dict[key] = {'name': piece_2_name[piece], 'col_number': cell_col, 'row_number': cell_row, 'player': player}
         
     return chess_state_dict, chess_state_matrix
