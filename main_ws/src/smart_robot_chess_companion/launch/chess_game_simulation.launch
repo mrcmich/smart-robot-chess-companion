@@ -13,4 +13,5 @@
   </include>
   
   <node name="ur3e_puppeteer_node" pkg="smart_robot_chess_companion" type="ur3e_puppeteer_node.py" respawn="false" />
+  <node name="perception_node" pkg="smart_robot_chess_companion" type="perception_node.py" respawn="false" />
 </launch>
