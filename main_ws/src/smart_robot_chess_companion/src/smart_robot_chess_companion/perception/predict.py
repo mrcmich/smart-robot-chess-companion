@@ -21,19 +21,21 @@ def predict(model_checkpoint_path: str, img: np.ndarray, device: str) -> Tuple[D
         
     chess_state_dict = {}
     piece_counter = defaultdict(int)
+    cells_populated = {}
     chess_state_matrix = np.full((8, 8), fill_value=-1, dtype=np.int8)
     
     image_h, image_w, _ = img.shape
     
     model = YOLO(model_checkpoint_path)
-    detections = model.predict(img, imgsz=image_h, conf=0.5, device=device, save_txt=False, save=False, verbose=False)
+    detections = model.predict(img, imgsz=image_h, conf=0.7, device=device, save_txt=False, save=False, verbose=False)
     
     for cur_detection in detections:
         class_names = cur_detection.names
         image_h, image_w = cur_detection.orig_shape
         bboxes = cur_detection.boxes.xywhn.numpy()
         classes = cur_detection.boxes.cls.numpy()
-        for cls_idx, (x, y, w, h) in zip(classes, bboxes):
+        confs = cur_detection.boxes.conf.numpy()
+        for cls_idx, conf, (x, y, w, h) in zip(classes, confs, bboxes):
             piece, player = class_names[cls_idx].split("_")
             piece_counter[class_names[cls_idx]] += 1
             x, w = int(x * image_w), int(w * image_w)
@@ -45,6 +47,9 @@ def predict(model_checkpoint_path: str, img: np.ndarray, device: str) -> Tuple[D
                 continue
             cell_col = cell_col[0].item(0)
             cell_row = 7 - cell_row[0].item(0)
+            if (cell_row, cell_col) in cells_populated:
+                if conf < cells_populated[(cell_row, cell_col)]:
+                    continue
             chess_state_matrix[cell_row, cell_col] = cls_idx
             key = f'{player}_{piece}'
             if not piece in ['queen', 'king']:
