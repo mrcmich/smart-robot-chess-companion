@@ -50,6 +50,7 @@ def predict(model_checkpoint_path: str, img: np.ndarray, device: str) -> Tuple[D
             if (cell_row, cell_col) in cells_populated:
                 if conf < cells_populated[(cell_row, cell_col)]:
                     continue
+            cells_populated[(cell_row, cell_col)] = conf
             chess_state_matrix[cell_row, cell_col] = cls_idx
             key = f'{player}_{piece}'
             if not piece in ['queen', 'king']:
