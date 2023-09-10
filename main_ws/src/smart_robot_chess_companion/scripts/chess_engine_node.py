@@ -112,7 +112,7 @@ def compute_move_and_player(board_state_dict, last_board_state):
 
     for chess_piece in board_state_dict.values():
         chess_piece_name_unicode = ord(chess_piece['name'])
-        row_index = chess_piece['row_number']
+        row_index = 7 - chess_piece['row_number']
         col_index = chess_piece['col_number']
         key = str(row_index) + str(col_index)
         board_cell_player_mapping[key] = chess_piece['player']
@@ -139,7 +139,7 @@ def compute_move_and_player(board_state_dict, last_board_state):
 
     key = str(starting_cell[0]) + str(starting_cell[1])
     player = board_cell_player_mapping[key]
-
+	
     return ((starting_cell, final_cell), player)
 
 def update_board_state(board_state_message, *args):
