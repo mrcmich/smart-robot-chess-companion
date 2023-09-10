@@ -12,14 +12,17 @@ def extract_commands_from_ros_message(message, *args):
     input = args[0][0]
     output = args[0][1]
     n_captured_chess_pieces = input['n_captured_chess_pieces']
-    output['move'] = message_data_dict['move']
-    output['capture'] = message_data_dict['capture']
 
-    if output['capture'] is not None:
-        output['capture']['final_cell'] = config.MAPPING_N_CAPTURED_CHESS_PIECES_CELL[n_captured_chess_pieces]
+    if message_data_dict['capture'] is not None:
+        message_data_dict['capture']['final_cell'] = config.MAPPING_N_CAPTURED_CHESS_PIECES_CELL[n_captured_chess_pieces]
         input['n_captured_chess_pieces'] += 1
 
-    output['timestamp'] = message_data_dict['timestamp']
+    cmd = {
+        'timestamp': message_data_dict['timestamp'],
+        'move': message_data_dict['move'],
+        'capture': message_data_dict['capture']
+    }
+    output.append(cmd)
     
 def ur3e_puppeteer_node():
     rospy.init_node('ur3e_puppeteer_node', log_level=rospy.DEBUG)
@@ -36,11 +39,7 @@ def ur3e_puppeteer_node():
     is_camera_view_free_publisher = rospy.Publisher('is_camera_view_free', Bool, queue_size=10)
     last_timestamp = None
     input = {'n_captured_chess_pieces': 0}
-    output = { 
-        'timestamp': None , 
-        'move': {'chess_piece_type': None, 'starting_cell': None, 'final_cell': None}, 
-        'capture': {'chess_piece_type': None, 'starting_cell': None, 'final_cell': None}
-    }
+    output = []
     ur3e_puppeteer_node_cmd_subscriber = rospy.Subscriber(
         'ur3e_puppeteer_node_cmd', 
         String, 
@@ -50,10 +49,19 @@ def ur3e_puppeteer_node():
     )
     
     while not rospy.is_shutdown():
-        if output['timestamp'] is not None and output['timestamp'] != last_timestamp:
+        rospy.logdebug(f'command queue: {output}')
+
+        if len(output) == 0:
+            is_camera_view_free_publisher.publish(True)
+            rate.sleep()
+            continue
+
+        cmd = output.pop(0)
+
+        if cmd['timestamp'] is not None and cmd['timestamp'] != last_timestamp:
             is_camera_view_free_publisher.publish(False)
-            move_cmd = output['move']
-            capture_cmd = output['capture']
+            move_cmd = cmd['move']
+            capture_cmd = cmd['capture']
 
             if capture_cmd is not None:
                 robot_chess_companion.move_chess_piece(
@@ -61,7 +69,7 @@ def ur3e_puppeteer_node():
                     starting_cell=capture_cmd['starting_cell'], 
                     final_cell=capture_cmd['final_cell'], 
                 )
-                rospy.sleep(0.5)
+                rospy.sleep(1.0)
 
             robot_chess_companion.move_chess_piece(
                 chess_piece_type=move_cmd['chess_piece_type'], 
@@ -69,7 +77,7 @@ def ur3e_puppeteer_node():
                 final_cell=move_cmd['final_cell'], 
             )
             
-            last_timestamp = output['timestamp']
+            last_timestamp = cmd['timestamp']
             is_camera_view_free_publisher.publish(True)
         else:
             is_camera_view_free_publisher.publish(True)
