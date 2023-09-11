@@ -26,7 +26,7 @@ def extract_commands_from_ros_message(message, *args):
     
 def ur3e_puppeteer_node():
     rospy.init_node('ur3e_puppeteer_node', log_level=rospy.DEBUG)
-    rate = rospy.Rate(2)
+    rate = rospy.Rate(1)
     robot_arm = arm.Arm(ft_sensor=True, gripper=constants.GENERIC_GRIPPER) 
     robot_chess_companion = RobotChessCompanion(
         robot_arm,
@@ -48,46 +48,42 @@ def ur3e_puppeteer_node():
         queue_size=10
     )
 
-    is_first_move_done = False
-    
     while not rospy.is_shutdown():
         rospy.logdebug(f'command queue: {output}')
         
-        is_camera_view_free = is_first_move_done
-
         if len(output) == 0:
-            is_camera_view_free_publisher.publish(is_camera_view_free)
+            is_camera_view_free_publisher.publish(False)
             rate.sleep()
             continue
 
         cmd = output.pop(0)
-
-        if cmd['timestamp'] is not None and cmd['timestamp'] != last_timestamp:
-            is_first_move_done = True
-
-            is_camera_view_free_publisher.publish(False)
-            move_cmd = cmd['move']
-            capture_cmd = cmd['capture']
-
-            if capture_cmd is not None:
-                robot_chess_companion.move_chess_piece(
-                    chess_piece_type=capture_cmd['chess_piece_type'], 
-                    starting_cell=capture_cmd['starting_cell'], 
-                    final_cell=capture_cmd['final_cell'], 
-                )
-                rospy.sleep(1.0)
-
-            robot_chess_companion.move_chess_piece(
-                chess_piece_type=move_cmd['chess_piece_type'], 
-                starting_cell=move_cmd['starting_cell'], 
-                final_cell=move_cmd['final_cell'], 
-            )
-            
-            last_timestamp = cmd['timestamp']
-            is_camera_view_free_publisher.publish(True)
-        else:
-            is_camera_view_free_publisher.publish(is_camera_view_free)
         
+        if cmd['timestamp'] is None or cmd['timestamp'] == last_timestamp:
+            is_camera_view_free_publisher.publish(False)
+            rate.sleep()
+            continue
+        
+        move_cmd = cmd['move']
+        capture_cmd = cmd['capture']
+
+        if capture_cmd is not None:
+            robot_chess_companion.move_chess_piece(
+                chess_piece_type=capture_cmd['chess_piece_type'], 
+                starting_cell=capture_cmd['starting_cell'], 
+                final_cell=capture_cmd['final_cell'], 
+            )
+            rospy.sleep(0.5)
+
+        robot_chess_companion.move_chess_piece(
+            chess_piece_type=move_cmd['chess_piece_type'], 
+            starting_cell=move_cmd['starting_cell'], 
+            final_cell=move_cmd['final_cell'], 
+        )
+        rospy.sleep(0.5)
+        last_timestamp = cmd['timestamp']
+        is_camera_view_free_publisher.publish(True)
+        rospy.sleep(0.5)
+        is_camera_view_free_publisher.publish(False)
         rate.sleep()
             
 if __name__ == '__main__':
