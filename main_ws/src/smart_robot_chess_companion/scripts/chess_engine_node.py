@@ -202,12 +202,12 @@ def chess_engine_node():
     game_state = chess_engine.GameState()
     last_timestamp = None
     input = { 'game_state': game_state, 'last_timestamp': last_timestamp, 'is_user_turn': is_user_turn }
-    board_state_subscriber = rospy.Subscriber(
-        'board_state', 
-        String, 
-        callback=update_board_state, 
-        callback_args=[input]
-    )
+    # board_state_subscriber = rospy.Subscriber(
+    #     'board_state', 
+    #     String, 
+    #     callback=update_board_state, 
+    #     callback_args=[input]
+    # )
     rospy.logdebug("Starting the match.")
     game_state.print_board()
     
@@ -218,10 +218,12 @@ def chess_engine_node():
                 user_move = plan_user_move(game_state)
                 user_move_message = compose_move_ros_messages(user_move, game_state)
                 move_chess_piece_command_publisher.publish(user_move_message)
+                game_state.move_piece(starting_square=user_move[0], ending_square=user_move[1], is_ai=False)
                 is_user_turn = False
                 input['is_user_turn'] = False
             
-            elif input['last_timestamp'] is not None and last_timestamp != input['last_timestamp']:
+            # elif input['last_timestamp'] is not None and last_timestamp != input['last_timestamp']:
+            else:
                 rospy.logdebug("AI's turn.")
                 game_state.print_board()
                 # Due to computing and algorithmic limitations, we limit the AI to reading only three moves ahead (depth=3)
