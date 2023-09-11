@@ -15,6 +15,7 @@ import numpy as np
 import rospy
 from std_msgs.msg import String
 
+MAPPING_CHESS_PIECE_TYPE_NUMERIC_ID = {chess_piece: index+2 for index, chess_piece in enumerate(Player.PIECES)}
 
 def is_valid_input(input_string):
     # Define the regular expression pattern (letter a-h for the columns, number 1-8 for the rows)
@@ -113,7 +114,9 @@ def compute_move(game_state, board_state_update_array):
             elem_ij = game_state.get_piece(i, j)
 
             if isinstance(elem_ij, Piece):
-                last_board_state_array[i][j] = ord(elem_ij.get_name())
+                elem_ij_type = f'{elem_ij.get_player()}_{elem_ij.get_name()}'
+                elem_ij_numeric_id = MAPPING_CHESS_PIECE_TYPE_NUMERIC_ID[elem_ij_type]
+                last_board_state_array[i][j] = elem_ij_numeric_id
 
     board_state_difference = board_state_update_array - last_board_state_array
     
@@ -149,10 +152,10 @@ def extract_board_state_update_array_from_ros_message(message, *args):
     board_state_array = np.ones((8, 8))
         
     for chess_piece in board_state_message_data_dict.values():
-        chess_piece_name_unicode = ord(chess_piece['name'])
+        chess_piece_type = f"{chess_piece['player']}_{chess_piece['name']}"
         row_index = chess_piece['row_number']
         col_index = chess_piece['col_number']
-        board_state_array[row_index, col_index] = chess_piece_name_unicode
+        board_state_array[row_index, col_index] = MAPPING_CHESS_PIECE_TYPE_NUMERIC_ID[chess_piece_type]
         
     rospy.logdebug(f'Received state of pieces: {list(board_state_message_data_dict.keys())}')
     output.append(board_state_array)
