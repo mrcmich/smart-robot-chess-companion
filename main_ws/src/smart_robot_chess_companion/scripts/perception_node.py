@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 import rospy
 from std_msgs.msg import Bool, String
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, CompressedImage
 from cv_bridge import CvBridge
 
 import smart_robot_chess_companion.utils as utils
@@ -42,8 +42,8 @@ def perception_node() -> None:
     )
     
     image_raw_subscriber = rospy.Subscriber(
-        'camera/image_raw', 
-        Image, 
+        '/camera/image_raw/compressed', 
+        CompressedImage, 
         read_image,
         callback_args=[input]
     )
@@ -55,7 +55,8 @@ def perception_node() -> None:
     last_msg_sent = None
     while not rospy.is_shutdown():
         if input['is_camera_view_free'] and input['image'] is not None:
-            img = bridge.imgmsg_to_cv2(input['image'], 'bgr8')
+            img = bridge.compressed_imgmsg_to_cv2(input['image'], 'rgb8')
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
             resized_img = cv2.resize(img[:, 280:-280, :], (0, 0), fx=ratio, fy=ratio, interpolation=cv2.INTER_AREA)
             board_state_dict, board_state_matrix = predict.predict(model_checkpoint_path=config.MODEL_CHECKPOINT_PATH, img=resized_img, device=config.DEVICE)
             if last_board_state_matrix is None or not np.all(board_state_matrix == last_board_state_matrix):
