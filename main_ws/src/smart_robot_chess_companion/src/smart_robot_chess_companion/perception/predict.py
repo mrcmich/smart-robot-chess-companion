@@ -34,7 +34,6 @@ def predict(model_checkpoint_path: str, img: np.ndarray, device: str) -> Tuple[D
     confs = detections.boxes.conf.numpy()
     
     for cls_idx, conf, (x, y, w, h) in zip(classes, confs, bboxes):
-        piece, player = class_names[cls_idx].split("_")
         x, w = int(x * image_w), int(w * image_w)
         y, h = int(y * image_h), int(h * image_w)
         cell_col = np.where((x >= ranges[:, 0]) & (x < ranges[:, 1]))[0]
