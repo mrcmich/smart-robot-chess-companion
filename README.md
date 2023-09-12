@@ -29,7 +29,10 @@ In order to bring up the simulation, run the following command:
   ```
    roslaunch smart_robot_chess_companion chess_game_simulation.launch
   ```
-While the simulation is running, it's possible to send commands to joints and gripper of the robot.
+You can now start a game of chess inside the simulation by running the following:
+  ```
+   rosrun smart_robot_chess_companion chess_engine_node.py
+  ```
 
 ## Authors
 - [Francesco Baraldi](https://github.com/francescobaraldi)

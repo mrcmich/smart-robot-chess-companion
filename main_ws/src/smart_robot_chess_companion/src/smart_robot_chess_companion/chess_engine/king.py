@@ -1,11 +1,15 @@
-from player import Player
-from piece import Piece
+from .player import Player
+from .piece import Piece
 
 
 class King(Piece):
     def __init__(self, name, row_number, col_number, player):
         super().__init__(name, row_number, col_number, player)
         self.has_moved = False
+        self._type = 'king'
+    
+    def get_type(self):
+        return self._type
 
     def get_valid_piece_moves(self, game_state):
         _peaceful_moves = []

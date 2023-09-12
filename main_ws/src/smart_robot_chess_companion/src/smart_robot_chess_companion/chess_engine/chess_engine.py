@@ -1,10 +1,11 @@
-from pieces.rook import Rook
-from pieces.knight import Knight
-from pieces.bishop import Bishop
-from pieces.pawn import Pawn
-from pieces.queen import Queen
-from pieces.king import King
-from player import Player
+import rospy
+from .rook import Rook
+from .knight import Knight
+from .bishop import Bishop
+from .pawn import Pawn
+from .queen import Queen
+from .king import King
+from .player import Player
 
 '''
 Internal representation of the indexes of the board cells:
@@ -18,8 +19,10 @@ r / c     0           1           2           3           4           5         
 2   [(r=2, c=0), (r=2, c=1), (r=2, c=2), (r=2, c=3), (r=2, c=4), (r=2, c=5), (r=2, c=6), (r=2, c=7)]
 1   [(r=1, c=0), (r=1, c=1), (r=1, c=2), (r=1, c=3), (r=1, c=4), (r=1, c=5), (r=1, c=6), (r=1, c=7)]
 0   [(r=0, c=0), (r=0, c=1), (r=0, c=2), (r=0, c=3), (r=0, c=4), (r=0, c=5), (r=0, c=6), (r=0, c=7)]
-'''
 
+N.B. White pieces initially occupy rows 0-1, black pieces initially occupy rows 6-7!
+
+'''
 
 # TODO: stalemate
 # TODO: move logs - fix king castle boolean update
@@ -40,8 +43,8 @@ class GameState:
         self.stalemate = False
         self._is_check = False
 
-        self._white_king_location = [0, 3]
-        self._black_king_location = [7, 3]
+        self._white_king_location = [0, 4]
+        self._black_king_location = [7, 4]
 
         # Has king not moved, has Rook1(col=0) not moved, has Rook2(col=7) not moved
         self.white_king_can_castle = [True, True, True]
@@ -54,8 +57,8 @@ class GameState:
         white_knight_2 = Knight('n', 0, 6, Player.PLAYER_1)
         white_bishop_1 = Bishop('b', 0, 2, Player.PLAYER_1)
         white_bishop_2 = Bishop('b', 0, 5, Player.PLAYER_1)
-        white_queen = Queen('q', 0, 4, Player.PLAYER_1)
-        white_king = King('k', 0, 3, Player.PLAYER_1)
+        white_king = King('k', 0, 4, Player.PLAYER_1)
+        white_queen = Queen('q', 0, 3, Player.PLAYER_1)
         white_pawn_1 = Pawn('p', 1, 0, Player.PLAYER_1)
         white_pawn_2 = Pawn('p', 1, 1, Player.PLAYER_1)
         white_pawn_3 = Pawn('p', 1, 2, Player.PLAYER_1)
@@ -72,8 +75,8 @@ class GameState:
         black_knight_2 = Knight('n', 7, 6, Player.PLAYER_2)
         black_bishop_1 = Bishop('b', 7, 2, Player.PLAYER_2)
         black_bishop_2 = Bishop('b', 7, 5, Player.PLAYER_2)
-        black_queen = Queen('q', 7, 4, Player.PLAYER_2)
-        black_king = King('k', 7, 3, Player.PLAYER_2)
+        black_king = King('k', 7, 4, Player.PLAYER_2)
+        black_queen = Queen('q', 7, 3, Player.PLAYER_2)
         black_pawn_1 = Pawn('p', 6, 0, Player.PLAYER_2)
         black_pawn_2 = Pawn('p', 6, 1, Player.PLAYER_2)
         black_pawn_3 = Pawn('p', 6, 2, Player.PLAYER_2)
@@ -82,24 +85,19 @@ class GameState:
         black_pawn_6 = Pawn('p', 6, 5, Player.PLAYER_2)
         black_pawn_7 = Pawn('p', 6, 6, Player.PLAYER_2)
         black_pawn_8 = Pawn('p', 6, 7, Player.PLAYER_2)
-
+        
+        # see row and column comments for indexing against physical chess board
+        # n.b. rows are stored from the one closest to the player (asssumed to be playing white) to the one closest to the robot!
         self._board = [
-            [white_rook_1, white_knight_1, white_bishop_1, white_king, white_queen, white_bishop_2, white_knight_2,
-             white_rook_2],
-            [white_pawn_1, white_pawn_2, white_pawn_3, white_pawn_4, white_pawn_5, white_pawn_6, white_pawn_7,
-             white_pawn_8],
-            [Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY,
-             Player.EMPTY],
-            [Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY,
-             Player.EMPTY],
-            [Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY,
-             Player.EMPTY],
-            [Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY, Player.EMPTY,
-             Player.EMPTY],
-            [black_pawn_1, black_pawn_2, black_pawn_3, black_pawn_4, black_pawn_5, black_pawn_6, black_pawn_7,
-             black_pawn_8],
-            [black_rook_1, black_knight_1, black_bishop_1, black_king, black_queen, black_bishop_2, black_knight_2,
-             black_rook_2]
+        #    a             b               c               d             e             f               g               h
+            [white_rook_1, white_knight_1, white_bishop_1, white_queen,  white_king,   white_bishop_2, white_knight_2, white_rook_2], # 1
+            [white_pawn_1, white_pawn_2,   white_pawn_3,   white_pawn_4, white_pawn_5, white_pawn_6,   white_pawn_7,   white_pawn_8], # 2
+            [Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY, Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY], # 3
+            [Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY, Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY], # 4            
+            [Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY, Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY], # 5            
+            [Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY, Player.EMPTY, Player.EMPTY,   Player.EMPTY,   Player.EMPTY], # 6             
+            [black_pawn_1, black_pawn_2,   black_pawn_3,   black_pawn_4, black_pawn_5, black_pawn_6,   black_pawn_7,   black_pawn_8], # 7         
+            [black_rook_1, black_knight_1, black_bishop_1, black_queen,  black_king,   black_bishop_2, black_knight_2, black_rook_2]  # 8           
         ]
 
     @property
@@ -114,6 +112,7 @@ class GameState:
 
     def print_board(self):
         """Debugging function that prints the state of the board."""
+        # rospy.logdebug("  a b c d e f g h")
         print("  a b c d e f g h")
         for row in range(8):
             row_str = str(8 - row) + " "
@@ -123,6 +122,7 @@ class GameState:
                     row_str += ". "
                 else:
                     row_str += piece.get_name() + " "
+            # rospy.logdebug(row_str)
             print(row_str)
 
     def is_valid_piece(self, row, col):

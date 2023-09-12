@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-  <include file="$(find ur3_gazebo)/launch/test_ur_gripper_hande_chess_game_free_chess_board.launch">
-  </include>
-</launch>

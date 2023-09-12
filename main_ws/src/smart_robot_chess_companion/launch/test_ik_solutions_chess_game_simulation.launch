@@ -5,13 +5,12 @@
   <arg name="gui"    default="true"/>
   <arg name="rate"   default="500" />
   
-  <include file="$(find ur3_gazebo)/launch/ur_gripper_hande_chess_game.launch">
+  <include file="$(find ur3_gazebo)/launch/test_ur_gripper_hande_chess_game_free_chess_board.launch">
     <arg name="paused" value="$(arg paused)"/>
     <arg name="debug"  value="$(arg debug)"/>
     <arg name="gui"    value="$(arg gui)"/>
     <arg name="rate"   value="$(arg rate)" />
   </include>
   
-  <node name="ur3e_puppeteer_node" pkg="smart_robot_chess_companion" type="ur3e_puppeteer_node.py" respawn="false" />
-  <node name="perception_node" pkg="smart_robot_chess_companion" type="perception_node.py" respawn="false" />
+  <node name="ur3e_ik_solutions_tester_node" pkg="smart_robot_chess_companion" type="ur3e_ik_solutions_tester_node.py" respawn="false" />
 </launch>
